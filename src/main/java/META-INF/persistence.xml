@@ -8,6 +8,8 @@
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<class>com.patco.doctorsdesk.server.domain.entities.Address</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Patient</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.Medicalhistory</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.Medicalhistoryentry</class>
 
 		<exclude-unlisted-classes />
 

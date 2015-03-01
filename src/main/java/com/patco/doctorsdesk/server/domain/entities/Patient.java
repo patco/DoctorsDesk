@@ -3,10 +3,13 @@ package com.patco.doctorsdesk.server.domain.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -19,6 +22,7 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 public class Patient extends DBEntity implements Serializable {
 
 	private static final long serialVersionUID = 6797130500240757054L;
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
@@ -37,8 +41,11 @@ public class Patient extends DBEntity implements Serializable {
 	@NotEmpty
 	private String surname;
 	
+	@NotNull
+	@OneToOne(cascade=CascadeType.ALL, mappedBy="patient", fetch=FetchType.LAZY)
+	private Medicalhistory medicalhistory;
 	
-	
+	public Integer getId() 			{	return this.id;	}
 	
 	@Override
 	public String getXML() {
