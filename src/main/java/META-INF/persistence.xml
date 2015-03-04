@@ -6,6 +6,7 @@
 
 	<persistence-unit name="com.patco.doctorsdesk" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<class>com.patco.doctorsdesk.server.domain.entities.Activity</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Address</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Contactinfo</class>		
 		<class>com.patco.doctorsdesk.server.domain.entities.Patient</class>
