@@ -7,14 +7,18 @@
 	<persistence-unit name="com.patco.doctorsdesk" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<class>com.patco.doctorsdesk.server.domain.entities.Address</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.Contactinfo</class>		
 		<class>com.patco.doctorsdesk.server.domain.entities.Patient</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.PatientHistory</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Doctor</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Medicalhistory</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Medicalhistoryentry</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.PricelistItem</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Discount</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Visit</class>
-		
+		<class>com.patco.doctorsdesk.server.domain.entities.Prescription</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.PrescriptionEntry</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.Medicine</class>
 		<exclude-unlisted-classes />
 
 		<!-- <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode> <validation-mode>NONE</validation-mode> -->

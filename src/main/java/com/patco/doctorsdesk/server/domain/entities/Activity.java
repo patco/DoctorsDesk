@@ -45,7 +45,7 @@ public class Activity extends DBEntity implements Serializable {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "patienthistid")
-	private Patienthistory patienthistory;
+	private PatientHistory patienthistory;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -107,11 +107,11 @@ public class Activity extends DBEntity implements Serializable {
 		this.startdate = startdate;
 	}
 
-	public Patienthistory getPatienthistory() {
+	public PatientHistory getPatienthistory() {
 		return patienthistory;
 	}
 
-	public void setPatienthistory(Patienthistory patienthistory) {
+	public void setPatienthistory(PatientHistory patienthistory) {
 		this.patienthistory = patienthistory;
 	}
 
