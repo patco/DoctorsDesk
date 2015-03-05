@@ -1,18 +1,27 @@
 package com.patco.doctorsdesk.server.util;
 
 import java.util.Calendar;
+import java.util.Iterator;
 
+import javax.validation.ConstraintViolationException;
+
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+
+import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidAddressTypeException;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidContactInfoTypeException;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidMedEntryAlertException;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidMedIntakeRouteException;
+import com.patco.doctorsdesk.server.util.exceptions.InvalidTitleFormatTypeException;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 public class DoctorsDeskUtils {
 
 	// ADDRESS TYPE
 	public static enum AddressType {
-		HOME(0, "Home Address"), OFFICE(1, "Office Address"), BILLING(2,
-				"Billing Address");
+		HOME(0, "Home Address"), 
+		OFFICE(1, "Office Address"), 
+		BILLING(2,"Billing Address");
 
 		private final String desc;
 		private final int value;
@@ -49,8 +58,10 @@ public class DoctorsDeskUtils {
 
 	// MEDICAL HISTORY ENTRY ALERTS
 	public static enum MedEntryAlertType {
-		NOALERT(0, "Normal"), LOW(1, "Low"), MEDIUM(2, "Medium"), HIGH(3,
-				"High");
+		NOALERT(0, "Normal"), 
+		LOW(1, "Low"), 
+		MEDIUM(2, "Medium"), 
+		HIGH(3,"High");
 
 		private final String desc;
 		private final int value;
@@ -87,8 +98,11 @@ public class DoctorsDeskUtils {
 
 	// MEDICINE INTAKE ROUTES
 	public static enum MedIntakeRoute {
-		ORAL(0, "Oral"), SUBLINGUAL(1, "Sublingual"), RECTAL(2, "Rectal"), TRANSDERMAL(
-				3, "Transdermal"), TRANSMUCOSAL(4, "Transmucosal");
+		ORAL(0, "Oral"), 
+		SUBLINGUAL(1, "Sublingual"), 
+		RECTAL(2, "Rectal"), 
+		TRANSDERMAL(3, "Transdermal"), 
+		TRANSMUCOSAL(4, "Transmucosal");
 
 		private final String desc;
 		private final int value;
@@ -124,10 +138,10 @@ public class DoctorsDeskUtils {
 	}
 
 	public static enum PrescrRowTimeunit {
-		HOURS(Calendar.HOUR_OF_DAY, "hour(s)", "hour(s)"), DAYS(
-				Calendar.DAY_OF_MONTH, "day(s)", "day(s)"), WEEK(
-				Calendar.WEEK_OF_MONTH, "week(s)", "week(s)"), MONTH(
-				Calendar.MONTH, "month(s)", "month(s)");
+		HOURS(Calendar.HOUR_OF_DAY, "hour(s)", "hour(s)"), 
+		DAYS(Calendar.DAY_OF_MONTH, "day(s)", "day(s)"), 
+		WEEK(Calendar.WEEK_OF_MONTH, "week(s)", "week(s)"), 
+		MONTH(Calendar.MONTH, "month(s)", "month(s)");
 
 		private final String ddesc, fdesc;
 		private final int value;
@@ -210,6 +224,77 @@ public class DoctorsDeskUtils {
 				return tp.getDescription();
 		}
 		return "";
+	}
+
+	// VISIT EVENT TITLE FORMAT TYPE
+	public static enum EventTitleFormatType {
+		FULL(1, "Name and Surname"), 
+		NAME(2, "Name only"), 
+		SURNAME(3,"Surname only"), 
+		SHORT(4, "Surname and initial");
+
+		private final String desc;
+		private final int value;
+
+		private EventTitleFormatType(int type, String desc) {
+			value = type;
+			this.desc = desc;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		public String getDescription() {
+			return desc;
+		}
+	}
+
+	public static boolean isTitleFormatTypeValid(int type)
+			throws InvalidTitleFormatTypeException {
+		for (EventTitleFormatType tp : DoctorsDeskUtils.EventTitleFormatType
+				.values())
+			if (type == tp.getValue())
+				return true;
+		return false;
+	}
+
+	public static String findTitleFormatTypeDescr(int type) {
+		for (EventTitleFormatType tp : EventTitleFormatType.values()) {
+			if (tp.getValue() == type)
+				return tp.getDescription();
+		}
+		return "";
+	}
+
+	public static String createEventTitle(int type, Patient p)
+			throws InvalidTitleFormatTypeException {
+		if (!DoctorsDeskUtils.isTitleFormatTypeValid(type))
+			throw new InvalidTitleFormatTypeException(type);
+
+		if (type == DoctorsDeskUtils.EventTitleFormatType.FULL.getValue()) {
+			return p.getSurname() + " " + p.getName();
+		} else if (type == DoctorsDeskUtils.EventTitleFormatType.NAME.getValue()) {
+			return p.getName();
+		} else if (type == DoctorsDeskUtils.EventTitleFormatType.SHORT.getValue()) {
+			return p.getSurname() + " " + p.getName().substring(0, 1);
+		}
+		return p.getSurname();
+	}
+	
+	
+	public static ValidationException createValidationException (ConstraintViolationException e) {
+		String msg = "";
+		Iterator<?> it = e.getConstraintViolations().iterator();
+		while (it.hasNext()) {
+			ConstraintViolationImpl<?> impl = (ConstraintViolationImpl<?>)it.next();
+			String name = impl.getRootBean().getClass().toString();
+			name = name.substring(name.lastIndexOf(".")+1, name.length());
+			msg = msg.concat("Property->"+impl.getPropertyPath().toString().toUpperCase());
+			msg = msg.concat(" on Entity->"+name.toUpperCase());
+			msg = msg.concat(" "+impl.getMessage()+"\n"); 
+		}
+		return new ValidationException(msg,e);
 	}
 
 }

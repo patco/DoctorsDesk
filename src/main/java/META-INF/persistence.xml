@@ -20,6 +20,7 @@
 		<class>com.patco.doctorsdesk.server.domain.entities.Prescription</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.PrescriptionEntry</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Medicine</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.UserPreferences</class>
 		<exclude-unlisted-classes />
 
 		<!-- <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode> <validation-mode>NONE</validation-mode> -->

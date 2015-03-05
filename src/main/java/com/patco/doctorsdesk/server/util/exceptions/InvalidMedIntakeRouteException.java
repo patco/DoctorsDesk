@@ -1,6 +1,8 @@
 package com.patco.doctorsdesk.server.util.exceptions;
 
-public class InvalidMedIntakeRouteException extends Exception {
+import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
+
+public class InvalidMedIntakeRouteException extends DoctorsDeskException {
 	
 	private static final long serialVersionUID = 4983419371674637648L;
 

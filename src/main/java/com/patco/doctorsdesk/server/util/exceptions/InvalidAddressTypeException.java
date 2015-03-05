@@ -1,6 +1,8 @@
 package com.patco.doctorsdesk.server.util.exceptions;
 
-public class InvalidAddressTypeException extends Exception {
+import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
+
+public class InvalidAddressTypeException extends DoctorsDeskException {
 	private static final long serialVersionUID = -4741058213040803799L;
 	
 	public InvalidAddressTypeException(int invalidtype, Throwable x) {

@@ -1,6 +1,8 @@
 package com.patco.doctorsdesk.server.util.exceptions;
 
-public class InvalidContactInfoTypeException extends Exception {
+import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
+
+public class InvalidContactInfoTypeException extends DoctorsDeskException {
 
 	private static final long serialVersionUID = 2158392865895489109L;
 
