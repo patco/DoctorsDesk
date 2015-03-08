@@ -13,7 +13,7 @@ import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidMedEntryAlertException;
 
 @Entity
-public class Medicalhistoryentry extends DBEntity implements Serializable {
+public class Medicalhistoryentry extends DBEntity<MedicalhistoryentryPK> implements Serializable {
 
 	private static final long serialVersionUID = 7097652919235719709L;
 

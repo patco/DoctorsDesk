@@ -12,7 +12,7 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 
 @Entity
-public class Address extends DBEntity implements Serializable{
+public class Address extends DBEntity<AddressPK> implements Serializable{
 
 	private static final long serialVersionUID = -5130522884016048277L;
 	@EmbeddedId

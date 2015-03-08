@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
-public class Discount extends DBEntity implements Serializable {
+public class Discount extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 4216505498085131594L;
 

@@ -17,7 +17,7 @@ import com.patco.doctorsdesk.server.util.exceptions.InvalidMedIntakeRouteExcepti
 
 @Entity
 @Table(name="prescriptionentries")
-public class PrescriptionEntry extends DBEntity implements Serializable {
+public class PrescriptionEntry extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = -5203102117832830396L;
 

@@ -25,7 +25,7 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 
 @Entity
-public class Patient extends DBEntity implements Serializable {
+public class Patient extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 6797130500240757054L;
 

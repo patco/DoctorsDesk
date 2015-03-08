@@ -12,7 +12,7 @@ import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidTitleFormatTypeException;
 
 @Entity
-public class UserPreferences extends DBEntity implements Serializable {
+public class UserPreferences extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 5978164937464593953L;
 	
@@ -46,6 +46,12 @@ public class UserPreferences extends DBEntity implements Serializable {
 	private int scheduler_slotmins;
 	
 	//GETTERS/SETTERS
+	
+	@Override
+	public Integer getId() {
+		return doctor.getId();
+	}
+	
 	public String getTheme() {	return theme;	}
 	public String getEmailcontent() {	return emailcontent;	}
 	public Doctor getDoctor() 	{	return doctor;	}

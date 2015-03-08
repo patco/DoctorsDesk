@@ -20,7 +20,7 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name="patienthistory")
-public class PatientHistory extends DBEntity implements Serializable {
+public class PatientHistory extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 6217283569761594041L;
 
@@ -92,6 +92,11 @@ public class PatientHistory extends DBEntity implements Serializable {
 		if (activities.contains(a))
 			activities.remove(a);
 	}
+	
+	@Override
+	public Integer getId() {
+		return patient.getId();
+	}
 
 	public String getComments() {
 		return this.comments;
@@ -126,4 +131,6 @@ public class PatientHistory extends DBEntity implements Serializable {
 		ans.insert(ans.indexOf("</patienthistory"), "</activities>");
 		return ans.toString();
 	}
+
+
 }

@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
-public class Visit extends DBEntity implements Serializable {
+public class Visit extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 1496350686877985070L;
 

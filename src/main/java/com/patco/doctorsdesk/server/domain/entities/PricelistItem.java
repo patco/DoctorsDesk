@@ -18,7 +18,7 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name = "pricelist")
-public class PricelistItem extends DBEntity implements Serializable {
+public class PricelistItem extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = -7348816246853225500L;
 

@@ -20,7 +20,7 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name = "prescriptions")
-public class Prescription extends DBEntity implements Serializable {
+public class Prescription extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 2321514349568233099L;
 

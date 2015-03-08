@@ -16,7 +16,7 @@ import javax.persistence.OneToOne;
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
-public class Medicalhistory extends DBEntity implements Serializable {
+public class Medicalhistory extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 6648738534169907793L;
 

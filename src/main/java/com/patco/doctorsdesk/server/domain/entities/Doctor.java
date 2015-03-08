@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -21,7 +23,11 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name = "doctor")
-public class Doctor extends DBEntity implements Serializable {
+@NamedQueries({
+@NamedQuery(name="Doctor.GetAll", query="SELECT d FROM Doctor d"),
+@NamedQuery(name="Doctor.CountAll", query="SELECT count(d) FROM Doctor d")
+})
+public class Doctor extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = -4725822810854224357L;
 
