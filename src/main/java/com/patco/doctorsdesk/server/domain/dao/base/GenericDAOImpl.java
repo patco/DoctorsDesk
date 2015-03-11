@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.patco.doctorsdesk.server.domain.dao.base.interfaces.GenericDAO;
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 public abstract class GenericDAOImpl<E extends DBEntity<?>, P> implements
