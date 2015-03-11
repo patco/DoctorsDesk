@@ -1,4 +1,4 @@
-package com.patco.doctorsdesk.server.domain.dao.base.interfaces;
+package com.patco.doctorsdesk.server.domain.dao.base;
 
 import java.util.List;
 

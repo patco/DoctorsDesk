@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -20,6 +22,10 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name = "prescriptions")
+@NamedQueries({
+@NamedQuery(name="Prescription.GetAll", query="SELECT p FROM Prescription p"),
+@NamedQuery(name="Prescription.CountAll", query="SELECT count(p) FROM Prescription p")
+})
 public class Prescription extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 2321514349568233099L;

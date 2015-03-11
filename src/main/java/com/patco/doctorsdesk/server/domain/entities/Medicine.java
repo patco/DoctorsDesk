@@ -6,12 +6,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name="medicine")
+@NamedQueries({
+@NamedQuery(name="Medicine.GetAll", query="SELECT m FROM Medicine m"),
+@NamedQuery(name="Medicine.CountAll", query="SELECT count(m) FROM Medicine m")
+})
 public class Medicine extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 5540835858940264498L;

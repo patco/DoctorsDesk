@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
-import com.patco.doctorsdesk.server.domain.dao.DoctorDao;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 
 
@@ -20,7 +20,8 @@ import com.patco.doctorsdesk.server.domain.entities.Doctor;
 public class DoctorTest {
 	
 	@Inject
-	DoctorDao doctordao;
+	DoctorDAO doctordao;
+
 	
 	@Before
 	public void setUp(){

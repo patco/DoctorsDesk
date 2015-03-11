@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
@@ -12,7 +14,11 @@ import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidTitleFormatTypeException;
 
 @Entity
-public class UserPreferences extends DBEntity<Integer> implements Serializable {
+@NamedQueries({
+@NamedQuery(name="UserPreferences.GetAll", query="SELECT u FROM UserPreferences u"),
+@NamedQuery(name="UserPreferences.CountAll", query="SELECT count(u) FROM UserPreferences u")
+})
+public class UserPreferences extends DBEntity<Doctor> implements Serializable {
 
 	private static final long serialVersionUID = 5978164937464593953L;
 	
@@ -48,8 +54,8 @@ public class UserPreferences extends DBEntity<Integer> implements Serializable {
 	//GETTERS/SETTERS
 	
 	@Override
-	public Integer getId() {
-		return doctor.getId();
+	public Doctor getId() {
+		return doctor;
 	}
 	
 	public String getTheme() {	return theme;	}

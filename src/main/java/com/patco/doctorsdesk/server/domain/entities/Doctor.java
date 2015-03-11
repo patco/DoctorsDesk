@@ -25,11 +25,14 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 @Table(name = "doctor")
 @NamedQueries({
 @NamedQuery(name="Doctor.GetAll", query="SELECT d FROM Doctor d"),
-@NamedQuery(name="Doctor.CountAll", query="SELECT count(d) FROM Doctor d")
+@NamedQuery(name="Doctor.CountAll", query="SELECT count(d) FROM Doctor d"),
+@NamedQuery(name=Doctor.GETBYUSERNAME, query="SELECT d FROM Doctor d WHERE d.username= :username")
 })
 public class Doctor extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = -4725822810854224357L;
+
+	public static final String GETBYUSERNAME="Doctor.GetByUserName";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
