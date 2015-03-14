@@ -7,14 +7,27 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 
 @Entity
+@NamedQueries({
+@NamedQuery(name="Address.GetAll", query="SELECT a FROM Address a"),
+@NamedQuery(name="Address.CountAll", query="SELECT count(a) FROM Address a"),
+@NamedQuery(name="Address.CountPerPatient", query="SELECT count(a) FROM Address a WHERE a.patient =:patient"),
+@NamedQuery(name="Address.GetAllPerPatient", query="SELECT a FROM Address a WHERE a.patient =:patient")
+})
 public class Address extends DBEntity<AddressPK> implements Serializable{
 
 	private static final long serialVersionUID = -5130522884016048277L;
+	
+    public static final String COUNT_PER_PATIENT="Address.CountPerPatient";
+	public static final String GETALL_PER_PATIENT="Address.GetAllPerPatient";
+
+	
 	@EmbeddedId
 	private AddressPK id;
 	private String city;

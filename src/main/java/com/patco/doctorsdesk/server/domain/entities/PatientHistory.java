@@ -40,7 +40,7 @@ public class PatientHistory extends DBEntity<Integer> implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "patienthistory")
 	private Collection<Activity> activities;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "patienthistory", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "patienthistory", fetch = FetchType.LAZY)
 	private Collection<Prescription> prescriptions;
 
 	public PatientHistory() {

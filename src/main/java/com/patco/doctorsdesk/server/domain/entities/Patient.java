@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -25,9 +27,17 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 
 @Entity
+@NamedQueries({
+@NamedQuery(name="Patient.GetAll", query="SELECT p FROM Patient p"),
+@NamedQuery(name="Patient.CountAll", query="SELECT count(p) FROM Patient p"),
+@NamedQuery(name="Patient.CountPerDoctor", query="SELECT count(p) FROM Patient p WHERE p.doctor =:doctor"),
+@NamedQuery(name="Patient.GetAllPerDoctor", query="SELECT p FROM Patient p WHERE p.doctor =:doctor")
+})
 public class Patient extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 6797130500240757054L;
+    public static final String COUNT_PER_DOCTOR="Patient.CountPerDoctor";
+	public static final String GETALL_PER_DOCTOR="Patient.GetAllPerDoctor";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,10 +65,10 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient")
 	private PatientHistory patientHistory;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "patient", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true,mappedBy = "patient", fetch = FetchType.LAZY)
 	private Set<Address> addresses;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "patient", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true,mappedBy = "patient", fetch = FetchType.LAZY)
 	private Set<Contactinfo> contactinfo;
 
 	@NotNull
