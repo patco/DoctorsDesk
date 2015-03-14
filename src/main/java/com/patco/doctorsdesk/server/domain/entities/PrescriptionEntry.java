@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
@@ -66,7 +67,13 @@ public class PrescriptionEntry extends DBEntity<Integer> implements Serializable
 	public void setFrequency(int frequency) {	this.frequency = frequency;	}
 	public void setFrequnit(int frequnit) {		this.frequnit = frequnit;	}
 	public void setMedicine(Medicine medicine) {	this.medicine = medicine;	}
-	public void setPrescription(Prescription prescription) {	this.prescription = prescription;	}	
+	public void setPrescription(Prescription prescription) {	this.prescription = prescription;	}
+	
+	@PreRemove
+	public void preRemove(){
+	   setPrescription(null);	
+	}
+
 	
 	@Override
 	public String getXML() {

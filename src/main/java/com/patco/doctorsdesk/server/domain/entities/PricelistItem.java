@@ -11,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -18,9 +21,18 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name = "pricelist")
+@NamedQueries({
+@NamedQuery(name="PricelistItem.GetAll", query="SELECT p FROM PricelistItem p"),
+@NamedQuery(name="PricelistItem.CountAll", query="SELECT count(p) FROM PricelistItem p"),
+@NamedQuery(name="PricelistItem.CountPerDoctor", query="SELECT count(p) FROM PricelistItem p WHERE p.doctor =:doctor"),
+@NamedQuery(name="PricelistItem.GetAllPerDoctor", query="SELECT p FROM PricelistItem p WHERE p.doctor =:doctor")
+})
 public class PricelistItem extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = -7348816246853225500L;
+	
+	public static final String COUNT_PER_DOCTOR="PricelistItem.CountPerDoctor";
+	public static final String GETALL_PER_DOCTOR="PricelistItem.GetAllPerDoctor";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,7 +98,12 @@ public class PricelistItem extends DBEntity<Integer> implements Serializable {
 	public void setDoctor(Doctor doctor) {
 		this.doctor = doctor;
 	}
-
+	
+	@PreRemove
+	public void preRemove(){
+	   setDoctor(null);	
+	}
+	
 	@Override
 	public String getXML() {
 		StringBuilder ans = new StringBuilder("<pricable></pricable>");
@@ -96,5 +113,7 @@ public class PricelistItem extends DBEntity<Integer> implements Serializable {
 		ans.insert(ans.indexOf("</pricable"), "<price>" + price + "</price>");
 		return ans.toString();
 	}
+	
+	
 
 }

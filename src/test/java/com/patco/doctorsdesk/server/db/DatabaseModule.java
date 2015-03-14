@@ -5,8 +5,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
+import com.patco.doctorsdesk.server.domain.dao.DiscountDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.DoctorDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.MedicineDAOImpl;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicineDAO;
 
@@ -19,6 +21,7 @@ public class DatabaseModule extends AbstractModule {
 		//bind(new TypeLiteral<GenericDAO<Doctor, Integer>>() {}).to(new TypeLiteral<DoctorDAOImpl>() {});
 		bind(DoctorDAO.class).to(DoctorDAOImpl.class);
 		bind(MedicineDAO.class).to(MedicineDAOImpl.class);
+		bind(DiscountDAO.class).to(DiscountDAOImpl.class);
 
 	}
 	

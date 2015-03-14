@@ -35,7 +35,7 @@ public class Prescription extends DBEntity<Integer> implements Serializable {
 	private Integer id;
 
 	private Timestamp created;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "prescription", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "prescription", fetch = FetchType.LAZY)
 	private Collection<PrescriptionEntry> prescriptionentries;
 
 	@ManyToOne

@@ -59,9 +59,9 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 	@Column(unique = true, length = 16)
 	private String username;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval=true, mappedBy = "doctor", fetch = FetchType.LAZY)
 	private Collection<Discount> discounts;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "doctor", fetch = FetchType.LAZY)
 	private Collection<PricelistItem> priceables;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor", fetch = FetchType.EAGER)
 	private Collection<Patient> patients;
