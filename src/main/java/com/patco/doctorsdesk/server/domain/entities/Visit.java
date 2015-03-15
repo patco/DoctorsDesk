@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -20,9 +22,23 @@ import javax.validation.constraints.NotNull;
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
+@NamedQueries({
+@NamedQuery(name="Visit.GetAll", query="SELECT v FROM Visit v"),
+@NamedQuery(name="Visit.CountAll", query="SELECT count(v) FROM Visit v"),
+@NamedQuery(name="Visit.CountPerPatient", query="SELECT count(v) FROM Visit v WHERE v.activity.patienthistory.patient =:patient"),
+@NamedQuery(name="Visit.GetAllPerPatient", query="SELECT v FROM Visit v WHERE v.activity.patienthistory.patient =:patient"),
+@NamedQuery(name="Visit.CountPerActivity", query="SELECT v FROM Visit v WHERE v.activity =:activity"),
+@NamedQuery(name="Visit.GetAllPerActivity", query="SELECT v FROM Visit v WHERE v.activity =:activity")
+})
 public class Visit extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 1496350686877985070L;
+	
+    public static final String COUNT_PER_PATIENT="Visit.CountPerPatient";
+	public static final String GETALL_PER_PATIENT="Visit.GetAllPerPatient";
+	public static final String COUNT_PER_ACTIVITY="Visit.CountPerActivity";
+	public static final String GETALL_PER_ACTIVITY="Visit.GetAllPerActivity";
+	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

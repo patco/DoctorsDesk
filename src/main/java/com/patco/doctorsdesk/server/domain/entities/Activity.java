@@ -14,6 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,12 +24,20 @@ import javax.validation.constraints.NotNull;
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
+@NamedQueries({
+@NamedQuery(name="Activity.GetAll", query="SELECT a FROM Activity a"),
+@NamedQuery(name="Activity.CountAll", query="SELECT count(a) FROM Activity a"),
+@NamedQuery(name="Activity.CountPerPatient", query="SELECT count(a) FROM Activity a WHERE a.patienthistory.patient =:patient"),
+@NamedQuery(name="Activity.GetAllPerPatient", query="SELECT a FROM Activity a WHERE a.patienthistory.patient =:patient")
+})
 public class Activity extends DBEntity<Integer> implements Serializable {
 
 	private static final long serialVersionUID = -278053229570688972L;
 
 	public static final String DEFAULT_ACTIVITY_IDENTIFIER_DESCR = "def act| cdent";
-
+    public static final String COUNT_PER_PATIENT="Activity.CountPerPatient";
+	public static final String GETALL_PER_PATIENT="Activity.GetAllPerPatient";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

@@ -7,12 +7,19 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.PreRemove;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 import com.patco.doctorsdesk.server.util.exceptions.InvalidMedEntryAlertException;
 
 @Entity
+@NamedQueries({
+@NamedQuery(name="Medicalhistoryentry.GetAll", query="SELECT m FROM Medicalhistoryentry m"),
+@NamedQuery(name="Medicalhistoryentry.CountAll", query="SELECT count(m) FROM Medicalhistoryentry m")
+})
 public class Medicalhistoryentry extends DBEntity<MedicalhistoryentryPK> implements Serializable {
 
 	private static final long serialVersionUID = 7097652919235719709L;
@@ -63,6 +70,11 @@ public class Medicalhistoryentry extends DBEntity<MedicalhistoryentryPK> impleme
 			return;
 		}
 		throw new InvalidMedEntryAlertException(alert);
+	}
+	
+	@PreRemove
+	void preRemove(){
+		setMedicalhistory(null);
 	}
 
 	@Override

@@ -10,13 +10,19 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
-public class Medicalhistory extends DBEntity<Integer> implements Serializable {
+@NamedQueries({
+@NamedQuery(name="Medicalhistory.GetAll", query="SELECT m FROM Medicalhistory m"),
+@NamedQuery(name="Medicalhistory.CountAll", query="SELECT count(m) FROM Medicalhistory m")
+})
+public class Medicalhistory extends DBEntity<Patient> implements Serializable {
 
 	private static final long serialVersionUID = 6648738534169907793L;
 
@@ -28,11 +34,11 @@ public class Medicalhistory extends DBEntity<Integer> implements Serializable {
 	@Column(nullable = true, length = 1024)
 	private String comments;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "medicalhistory")
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "medicalhistory")
 	private Collection<Medicalhistoryentry> entries;
 
-	public Integer getId() {
-		return patient.getId();
+	public Patient getId() {
+		return patient;
 	}
 
 	public String getComments() {

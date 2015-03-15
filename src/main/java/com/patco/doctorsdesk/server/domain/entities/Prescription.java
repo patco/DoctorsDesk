@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
@@ -95,6 +96,11 @@ public class Prescription extends DBEntity<Integer> implements Serializable {
 	public void addPrescriptionRow(PrescriptionEntry entry) {
 		entry.setPrescription(this);
 		prescriptionentries.add(entry);
+	}
+	
+	@PreRemove
+	public void preRemove(){
+		setPatienthistory(null);
 	}
 
 	@Override
