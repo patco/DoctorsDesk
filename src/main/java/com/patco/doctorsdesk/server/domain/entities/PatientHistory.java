@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -20,7 +22,11 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
 @Table(name="patienthistory")
-public class PatientHistory extends DBEntity<Integer> implements Serializable {
+@NamedQueries({
+@NamedQuery(name="PatientHistory.GetAll", query="SELECT p FROM PatientHistory p"),
+@NamedQuery(name="PatientHistory.CountAll", query="SELECT count(p) FROM PatientHistory p")
+})
+public class PatientHistory extends DBEntity<Patient> implements Serializable {
 
 	private static final long serialVersionUID = 6217283569761594041L;
 
@@ -37,7 +43,7 @@ public class PatientHistory extends DBEntity<Integer> implements Serializable {
 	@JoinColumn(name = "patientid")
 	private Patient patient;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "patienthistory")
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "patienthistory")
 	private Collection<Activity> activities;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "patienthistory", fetch = FetchType.LAZY)
@@ -79,6 +85,12 @@ public class PatientHistory extends DBEntity<Integer> implements Serializable {
 		activity.setPatienthistory(this);
 		activities.add(activity);
 	}
+	
+	public void removeActivity(Activity a) {
+		if (activities.contains(a))
+			activities.remove(a);
+	}
+
 
 	public Collection<Prescription> getPrescriptions() {
 		return this.prescriptions;
@@ -87,15 +99,24 @@ public class PatientHistory extends DBEntity<Integer> implements Serializable {
 	public void setPrescriptions(Collection<Prescription> prescriptions) {
 		this.prescriptions = prescriptions;
 	}
+	
+	public void  addPrescription(Prescription prescription){
+		if (prescriptions == null)
+			prescriptions = new ArrayList<Prescription>();
 
-	public void removeActivity(Activity a) {
-		if (activities.contains(a))
-			activities.remove(a);
+		prescription.setPatienthistory(this);
+		prescriptions.add(prescription);
 	}
 	
+	public void removePrescription(Prescription prescription){
+		if (prescriptions.contains(prescription))
+			prescriptions.remove(prescription);
+	}
+	
+	
 	@Override
-	public Integer getId() {
-		return patient.getId();
+	public Patient getId() {
+		return patient;
 	}
 
 	public String getComments() {
