@@ -1,4 +1,5 @@
 target/
+test/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -51,3 +52,4 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.lck
