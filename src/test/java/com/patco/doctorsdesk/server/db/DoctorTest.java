@@ -1,143 +1,118 @@
 package com.patco.doctorsdesk.server.db;
 
-
 import static org.junit.Assert.assertEquals;
-
-import java.math.BigDecimal;
+import static org.junit.Assert.assertNotNull;
 
 import org.jukito.JukitoRunner;
 import org.jukito.UseModules;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
-import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
-import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 
-
 @RunWith(JukitoRunner.class)
-@UseModules(DatabaseModule.class) 
+@UseModules(DatabaseModule.class)
 public class DoctorTest {
-	
+
 	@Inject
 	DoctorDAO doctordao;
 
-	@Inject  
-	DiscountDAO discountdao;
-	
-	@Before
-	public void setUp(){
-		doctordao.getEntityManager().getTransaction().begin();
-	}
-	
-	 @After
-	 public void tearDown() throws Exception
-	 {
-		 doctordao.getEntityManager().getTransaction().rollback();
-	 }
-	
 	@Test
-	public void createDoctors(){
-		assertEquals(new Long(0), doctordao.countAll());
-		for (int i=0;i<10;i++){
-			Doctor d = new Doctor();
-			d.setName("DoctorName" +i);
-			d.setSurname("DoctorSurName" +i);
-			d.setPassword("DoctorPasswd" +i);
-			d.setUsername("doctor" +i);
-			doctordao.insert(d);
+	public void createDoctors() {
+		try {
+			doctordao.getEntityManager().getTransaction().begin();
+			assertEquals(new Long(0), doctordao.countAll());
+			for (int i = 0; i < 10; i++) {
+				Doctor d = new Doctor();
+				d.setName("DoctorName" + i);
+				d.setSurname("DoctorSurName" + i);
+				d.setPassword("DoctorPasswd" + i);
+				d.setUsername("doctor" + i);
+				doctordao.insert(d);
+			}
+			assertEquals(new Long(10), doctordao.countAll());
+		} finally {
+			doctordao.getEntityManager().getTransaction().rollback();
+		}
+	}
+
+	@Test
+	public void deleteDoctors() {
+		try {
+			doctordao.getEntityManager().getTransaction().begin();
+			for (int i = 0; i < 10; i++) {
+				Doctor d = new Doctor();
+				d.setName("DoctorName" + i);
+				d.setSurname("DoctorSurName" + i);
+				d.setPassword("DoctorPasswd" + i);
+				d.setUsername("doctor" + i);
+				doctordao.insert(d);
+			}	
+			assertEquals(new Long(10), doctordao.countAll());
+		} finally {
+			doctordao.getEntityManager().getTransaction().commit();
 		}
 		
-		assertEquals(new Long(10), doctordao.countAll());
+		try {
+			doctordao.getEntityManager().getTransaction().begin();
+			Doctor d1=doctordao.getDoctorByUserName("doctor" + 0);
+			assertNotNull(d1);
+			doctordao.delete(d1);
+			assertEquals(new Long(9),doctordao.countAll());
+			for(int i=1;i<10;i++){
+				Doctor d=doctordao.getDoctorByUserName("doctor" + i);
+				assertNotNull(d);
+				doctordao.delete(d);
+				assertEquals(new Long(9-i), doctordao.countAll());
+			}
+		} finally{
+			doctordao.getEntityManager().getTransaction().commit();
+		}
 	}
+	
 	
 	@Test
-	public void createAndDeleteDentistDiscount(){
-		Doctor d = new Doctor();
-		d.setName("DoctorName");
-		d.setSurname("DoctorSurName");
-		d.setPassword("DoctorPasswd");
-		d.setUsername("doctor");
+	public void updateDoctors(){
+		try {
+			doctordao.getEntityManager().getTransaction().begin();
+			Doctor d = new Doctor();
+			d.setName("Dimitris");
+			d.setSurname("Patakas");
+			d.setPassword("12345");
+			d.setUsername("dpatakas");
+			doctordao.insert(d);
+		} finally {
+			doctordao.getEntityManager().getTransaction().commit();
+		}
 		
-		Discount disc1 = new Discount();
-		disc1.setDescription("disc1");
-		disc1.setDiscount(new BigDecimal(10));
-		disc1.setTitle("disc1");
-		disc1.setDoctor(d);
-		d.addDiscount(disc1);
+		try {
+			doctordao.getEntityManager().getTransaction().begin();
+			Doctor doctor = doctordao.getDoctorByUserName("dpatakas");
+			assertNotNull(doctor);
+			doctor.setName("Athanasia");
+			doctor.setSurname("Pataka");
+			doctor.setPassword("34567");
+			doctor.setUsername("apataka");
+			doctordao.update(doctor);
+		} finally {
+			doctordao.getEntityManager().getTransaction().commit();
+		}
 		
-		Discount disc2 = new Discount();
-		disc2.setDescription("disc2");
-		disc2.setDiscount(new BigDecimal(11));
-		disc2.setTitle("disc2");
-		disc2.setDoctor(d);
-		d.addDiscount(disc2);
-		
-		Discount disc3 = new Discount();
-		disc3.setDescription("disc3");
-		disc3.setDiscount(new BigDecimal(10));
-		disc3.setTitle("disc3");
-		disc3.setDoctor(d);
-		d.addDiscount(disc3);
-		
-		doctordao.insert(d);
-		
-		assertEquals(new Long(3), discountdao.countDoctorDiscounts(d));
-		
-		d.removeDiscount(disc3);
-		
-		doctordao.update(d);
-		
-		assertEquals(new Long(2), discountdao.countDoctorDiscounts(d));
-		
+		try{
+			doctordao.getEntityManager().getTransaction().begin();
+			Doctor altered = doctordao.getDoctorByUserName("apataka");
+			assertNotNull(altered);
+			assertEquals("Athanasia", altered.getName());
+			assertEquals("Pataka",altered.getSurname());
+			assertEquals("34567",altered.getPassword());
+			assertEquals("apataka",altered.getUsername());
+			doctordao.delete(altered);
+			assertEquals(new Long(0), doctordao.countAll());
+		}finally{
+			doctordao.getEntityManager().getTransaction().commit();
+		}	
 	}
-	
-	@Test
-	public void createAndDeleteDiscount(){
-		Doctor d = new Doctor();
-		d.setName("DoctorName");
-		d.setSurname("DoctorSurName");
-		d.setPassword("DoctorPasswd");
-		d.setUsername("doctor");
-		
-		Discount disc1 = new Discount();
-		disc1.setDescription("disc1");
-		disc1.setDiscount(new BigDecimal(10));
-		disc1.setTitle("disc1");
-		disc1.setDoctor(d);
-		d.addDiscount(disc1);
-		
-		Discount disc2 = new Discount();
-		disc2.setDescription("disc2");
-		disc2.setDiscount(new BigDecimal(11));
-		disc2.setTitle("disc2");
-		disc2.setDoctor(d);
-		d.addDiscount(disc2);
-		
-		Discount disc3 = new Discount();
-		disc3.setDescription("disc3");
-		disc3.setDiscount(new BigDecimal(10));
-		disc3.setTitle("disc3");
-		disc3.setDoctor(d);
-		d.addDiscount(disc3);
-		
-		doctordao.insert(d);
-		
-		discountdao.delete(disc1);
-		
-		assertEquals(new Long(2), discountdao.countDoctorDiscounts(d));
-		
-		assertEquals(new Long(2), discountdao.countAll());
-		
-		assertEquals(2,doctordao.find(d.getId()).getDiscounts().size());
-		
-		
-		
-	}
-	
 
 }

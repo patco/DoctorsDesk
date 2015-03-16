@@ -4,4 +4,5 @@ import com.patco.doctorsdesk.server.domain.dao.base.GenericDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 
 public interface DoctorDAO extends GenericDAO<Doctor, Integer> {
+	Doctor getDoctorByUserName(String userName);
 }

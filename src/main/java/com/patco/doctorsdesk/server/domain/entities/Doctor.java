@@ -196,31 +196,31 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 			discounts.remove(d);
 	}
 
-	public static final String DENTIST_NODE = "<dentist>";
-	public static final String DENTIST_ENDNODE = "</dentist>";
-	public static final String DENTIST_NAMENODE = "<name>";
-	public static final String DENTIST_NAMEENDNODE = "</name>";
-	public static final String DENTIST_SURNAMENODE = "<surname>";
-	public static final String DENTIST_SURNAMEENDNODE = "</surname>";
-	public static final String DENTIST_USERNAMENODE = "<username>";
-	public static final String DENTIST_USERNAMEENDNODE = "</username>";
-	public static final String DENTIST_PASSWORDNODE = "<password>";
-	public static final String DENTIST_PASSWORDENDNODE = "</password>";
-	public static final String DENTIST_IDNODE = "<id>";
-	public static final String DENTIST_IDENDNODE = "</id>";
+	public static final String DOCTOR_NODE = "<dentist>";
+	public static final String DOCTOR_ENDNODE = "</dentist>";
+	public static final String DOCTOR_NAMENODE = "<name>";
+	public static final String DOCTOR_NAMEENDNODE = "</name>";
+	public static final String DOCTOR_SURNAMENODE = "<surname>";
+	public static final String DOCTOR_SURNAMEENDNODE = "</surname>";
+	public static final String DOCTOR_USERNAMENODE = "<username>";
+	public static final String DOCTOR_USERNAMEENDNODE = "</username>";
+	public static final String DOCTOR_PASSWORDNODE = "<password>";
+	public static final String DOCTOR_PASSWORDENDNODE = "</password>";
+	public static final String DOCTOR_IDNODE = "<id>";
+	public static final String DOCTOR_IDENDNODE = "</id>";
 
 	public String getBASICXML() {
-		StringBuilder ans = new StringBuilder(DENTIST_NODE + DENTIST_ENDNODE);
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), DENTIST_IDNODE + getId()
-				+ DENTIST_IDENDNODE);
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), DENTIST_NAMENODE + name
-				+ DENTIST_NAMEENDNODE);
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), DENTIST_SURNAMENODE + surname
-				+ DENTIST_SURNAMEENDNODE);
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), DENTIST_USERNAMENODE
-				+ username + DENTIST_USERNAMEENDNODE);
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), DENTIST_PASSWORDNODE
-				+ password + DENTIST_PASSWORDENDNODE);
+		StringBuilder ans = new StringBuilder(DOCTOR_NODE + DOCTOR_ENDNODE);
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), DOCTOR_IDNODE + getId()
+				+ DOCTOR_IDENDNODE);
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), DOCTOR_NAMENODE + name
+				+ DOCTOR_NAMEENDNODE);
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), DOCTOR_SURNAMENODE + surname
+				+ DOCTOR_SURNAMEENDNODE);
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), DOCTOR_USERNAMENODE
+				+ username + DOCTOR_USERNAMEENDNODE);
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), DOCTOR_PASSWORDNODE
+				+ password + DOCTOR_PASSWORDENDNODE);
 		return ans.toString();
 	}
 
@@ -228,23 +228,23 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 	public String getXML() {
 		StringBuilder ans = new StringBuilder(getBASICXML());
 
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), "<pricelist>");
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), "<pricelist>");
 		if (priceables != null)
 			for (PricelistItem pbl : priceables)
-				ans.insert(ans.indexOf(DENTIST_ENDNODE), pbl.getXML());
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), "</pricelist>");
+				ans.insert(ans.indexOf(DOCTOR_ENDNODE), pbl.getXML());
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), "</pricelist>");
 
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), "<discounts>");
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), "<discounts>");
 		if (discounts != null)
 			for (Discount ds : discounts)
-				ans.insert(ans.indexOf(DENTIST_ENDNODE), ds.getXML());
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), "</discounts>");
+				ans.insert(ans.indexOf(DOCTOR_ENDNODE), ds.getXML());
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), "</discounts>");
 
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), "<patientlist>");
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), "<patientlist>");
 		if (patients != null)
 			for (Patient patient : patients)
-				ans.insert(ans.indexOf(DENTIST_ENDNODE), patient.getXML());
-		ans.insert(ans.indexOf(DENTIST_ENDNODE), "</patientlist>");
+				ans.insert(ans.indexOf(DOCTOR_ENDNODE), patient.getXML());
+		ans.insert(ans.indexOf(DOCTOR_ENDNODE), "</patientlist>");
 
 		return ans.toString();
 	}
