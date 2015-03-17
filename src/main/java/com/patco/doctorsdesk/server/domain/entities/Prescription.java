@@ -3,7 +3,7 @@ package com.patco.doctorsdesk.server.domain.entities;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -37,7 +37,7 @@ public class Prescription extends DBEntity<Integer> implements Serializable {
 
 	private Timestamp created;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "prescription", fetch = FetchType.LAZY)
-	private Collection<PrescriptionEntry> prescriptionentries;
+	private List<PrescriptionEntry> prescriptionentries;
 
 	@ManyToOne
 	@JoinColumn(name = "doctorid")
@@ -59,7 +59,7 @@ public class Prescription extends DBEntity<Integer> implements Serializable {
 		return this.created;
 	}
 
-	public Collection<PrescriptionEntry> getPrescriptionEntries() {
+	public List<PrescriptionEntry> getPrescriptionEntries() {
 		return this.prescriptionentries;
 	}
 
@@ -84,7 +84,7 @@ public class Prescription extends DBEntity<Integer> implements Serializable {
 	}
 
 	public void setPrescriptionrows(
-			Collection<PrescriptionEntry> prescriptionrows) {
+			List<PrescriptionEntry> prescriptionrows) {
 		if (this.prescriptionentries == null)
 			this.prescriptionentries = new ArrayList<PrescriptionEntry>();
 

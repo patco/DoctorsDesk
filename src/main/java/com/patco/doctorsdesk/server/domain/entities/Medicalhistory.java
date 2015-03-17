@@ -2,7 +2,7 @@ package com.patco.doctorsdesk.server.domain.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -35,7 +35,7 @@ public class Medicalhistory extends DBEntity<Patient> implements Serializable {
 	private String comments;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "medicalhistory")
-	private Collection<Medicalhistoryentry> entries;
+	private List<Medicalhistoryentry> entries;
 
 	public Patient getId() {
 		return patient;
@@ -49,7 +49,7 @@ public class Medicalhistory extends DBEntity<Patient> implements Serializable {
 		return this.patient;
 	}
 
-	public Collection<Medicalhistoryentry> getEntries() {
+	public List<Medicalhistoryentry> getEntries() {
 		return this.entries;
 	}
 
@@ -87,7 +87,7 @@ public class Medicalhistory extends DBEntity<Patient> implements Serializable {
 		StringBuilder ans = new StringBuilder("<medhistory></medhistory>");
 		ans.insert(ans.indexOf("</medhistory"), "<comments>" + comments
 				+ "</comments>");
-		Collection<Medicalhistoryentry> entries = getEntries();
+		List<Medicalhistoryentry> entries = getEntries();
 		for (Medicalhistoryentry entry : entries) {
 			ans.insert(ans.indexOf("</medhistory"), entry.getXML());
 		}

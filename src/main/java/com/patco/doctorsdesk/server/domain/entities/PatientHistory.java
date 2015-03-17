@@ -2,8 +2,8 @@ package com.patco.doctorsdesk.server.domain.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -44,10 +44,10 @@ public class PatientHistory extends DBEntity<Patient> implements Serializable {
 	private Patient patient;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "patienthistory")
-	private Collection<Activity> activities;
+	private List<Activity> activities;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "patienthistory", fetch = FetchType.LAZY)
-	private Collection<Prescription> prescriptions;
+	private List<Prescription> prescriptions;
 
 	public PatientHistory() {
 	}
@@ -68,7 +68,7 @@ public class PatientHistory extends DBEntity<Patient> implements Serializable {
 		this.patient = patient;
 	}
 
-	public void setActivities(Collection<Activity> activities) {
+	public void setActivities(List<Activity> activities) {
 		if (activities == null)
 			activities = new ArrayList<Activity>();
 		else
@@ -92,11 +92,11 @@ public class PatientHistory extends DBEntity<Patient> implements Serializable {
 	}
 
 
-	public Collection<Prescription> getPrescriptions() {
+	public List<Prescription> getPrescriptions() {
 		return this.prescriptions;
 	}
 
-	public void setPrescriptions(Collection<Prescription> prescriptions) {
+	public void setPrescriptions(List<Prescription> prescriptions) {
 		this.prescriptions = prescriptions;
 	}
 	
@@ -135,7 +135,7 @@ public class PatientHistory extends DBEntity<Patient> implements Serializable {
 		return this.patient;
 	}
 
-	public Collection<Activity> getActivities() {
+	public List<Activity> getActivities() {
 		return this.activities;
 	}
 

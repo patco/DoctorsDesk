@@ -3,7 +3,7 @@ package com.patco.doctorsdesk.server.domain.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,7 +68,7 @@ public class Activity extends DBEntity<Integer> implements Serializable {
 	private Discount discount;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "activity", fetch = FetchType.EAGER)
-	private Collection<Visit> visits;
+	private List<Visit> visits;
 
 	@NotNull
 	private boolean isopen = true;
@@ -141,11 +141,11 @@ public class Activity extends DBEntity<Integer> implements Serializable {
 		this.discount = discount;
 	}
 
-	public Collection<Visit> getVisits() {
+	public List<Visit> getVisits() {
 		return visits;
 	}
 
-	public void setVisits(Collection<Visit> visits) {
+	public void setVisits(List<Visit> visits) {
 		this.visits = visits;
 	}
 	
