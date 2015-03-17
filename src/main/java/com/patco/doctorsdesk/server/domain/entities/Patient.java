@@ -147,7 +147,7 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 		this.medicalhistory = medicalhistory;
 	}
 	
-	public void setDentalhistory(PatientHistory patientHistory) 	{
+	public void setPatientHistory(PatientHistory patientHistory) 	{
 		patientHistory.setPatient(this);
 		this.patientHistory= patientHistory;	
 	}

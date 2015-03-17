@@ -201,8 +201,4 @@ public class DiscountTest {
 			discountdao.getEntityManager().getTransaction().commit();
 		}
 	}
-	
-	
-	
-
 }

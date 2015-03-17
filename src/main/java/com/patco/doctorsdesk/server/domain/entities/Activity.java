@@ -165,7 +165,7 @@ public class Activity extends DBEntity<Integer> implements Serializable {
 		return isopen;
 	}
 
-	public void setIsopen(boolean isopen) {
+	public void setisOpen(boolean isopen) {
 		this.isopen = isopen;
 	}
 

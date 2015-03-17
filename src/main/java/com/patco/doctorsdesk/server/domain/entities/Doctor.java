@@ -2,7 +2,7 @@ package com.patco.doctorsdesk.server.domain.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -60,13 +60,13 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 	private String username;
 
 	@OneToMany(cascade = CascadeType.ALL,orphanRemoval=true, mappedBy = "doctor", fetch = FetchType.LAZY)
-	private Collection<Discount> discounts;
+	private List<Discount> discounts;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "doctor", fetch = FetchType.LAZY)
-	private Collection<PricelistItem> priceables;
+	private List<PricelistItem> priceables;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor", fetch = FetchType.EAGER)
-	private Collection<Patient> patients;
+	private List<Patient> patients;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "doctor", fetch = FetchType.LAZY)
-	private Collection<Prescription> prescriptions;
+	private List<Prescription> prescriptions;
 
 	@Override
 	public String getUIFriendlyString() {
@@ -93,11 +93,11 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 		return this.name;
 	}
 
-	public Collection<Prescription> getPrescriptions() {
+	public List<Prescription> getPrescriptions() {
 		return this.prescriptions;
 	}
 
-	public void setPrescriptions(Collection<Prescription> prescriptions) {
+	public void setPrescriptions(List<Prescription> prescriptions) {
 		this.prescriptions = prescriptions;
 	}
 
@@ -122,11 +122,11 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 	}
 
 	// PATIENTS
-	public Collection<Patient> getPatientList() {
+	public List<Patient> getPatientList() {
 		return patients;
 	}
 
-	public void setPatients(Collection<Patient> patients) {
+	public void setPatients(List<Patient> patients) {
 		if (patients != null)
 			patients.clear();
 		for (Patient patient : patients) {
@@ -147,11 +147,11 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 	}
 
 	// PRICABLES
-	public Collection<PricelistItem> getPriceList() {
+	public List<PricelistItem> getPriceList() {
 		return priceables;
 	}
 
-	public void setPricelist(final Collection<PricelistItem> pc) {
+	public void setPricelist(final List<PricelistItem> pc) {
 		if (priceables != null)
 			priceables.clear();
 		for (PricelistItem item : priceables) {
@@ -172,11 +172,11 @@ public class Doctor extends DBEntity<Integer> implements Serializable {
 	}
 
 	// DISCOUNTS
-	public Collection<Discount> getDiscounts() {
+	public List<Discount> getDiscounts() {
 		return discounts;
 	}
 
-	public void setDiscounts(Collection<Discount> ds) {
+	public void setDiscounts(List<Discount> ds) {
 		if (discounts != null)
 			discounts.clear();
 		for (Discount discount : discounts) {

@@ -22,7 +22,7 @@ public class PatientDAOImpl extends GenericDAOImpl<Patient, Integer> implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Patient> getDoctorsPatient(Doctor doctor) {
-		Query q = getEntityManager().createNamedQuery(Discount.GETALL_PER_DOCTOR)
+		Query q = getEntityManager().createNamedQuery(Patient.GETALL_PER_DOCTOR)
 				  .setParameter("doctor", doctor);
 		return  q.getResultList();
 	}
