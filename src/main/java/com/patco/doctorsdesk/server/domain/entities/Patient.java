@@ -58,11 +58,11 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 	private String surname;
 
 	@NotNull
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient", fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient")
 	private Medicalhistory medicalhistory;
 
 	@NotNull
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient", fetch=FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient")
 	private PatientHistory patientHistory;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval=true,mappedBy = "patient", fetch = FetchType.LAZY)

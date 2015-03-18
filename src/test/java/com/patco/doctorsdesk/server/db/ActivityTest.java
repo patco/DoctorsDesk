@@ -93,7 +93,7 @@ public class ActivityTest {
 	public void deleteDependencies(){
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		Patient p = patientDao.getDoctorsPatient(d).get(0);
-		List<Activity> activities = activityDao.findAll();
+		List<Activity> activities = activityDao.getPatientActivities(p);
 		for (Activity activity:activities){
 			activityDao.delete(activity);
 		}
