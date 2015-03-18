@@ -6,7 +6,6 @@ import javax.persistence.Query;
 
 import com.patco.doctorsdesk.server.domain.dao.base.GenericDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
-import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 

@@ -3,7 +3,6 @@ package com.patco.doctorsdesk.server.db;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +15,8 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
+import com.patco.doctorsdesk.server.db.utils.DatabaseModule;
+import com.patco.doctorsdesk.server.db.utils.TestUtils;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
@@ -26,9 +27,7 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
-import com.patco.doctorsdesk.server.domain.entities.Medicalhistory;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
-import com.patco.doctorsdesk.server.domain.entities.PatientHistory;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
 
 @RunWith(JukitoRunner.class)
@@ -56,6 +55,9 @@ public class PatientTest {
 	@Inject 
 	PricelistItemDAO priceListDao;
 	
+	@Inject 
+	TestUtils testUtils;
+	
 	@Before
 	@Transactional
 	public void createDependencies(){
@@ -65,10 +67,10 @@ public class PatientTest {
 		d.setPassword("12345");
 		d.setUsername("dpatakas");
 		
-		Discount disc = createDefaultDiscount(d);
+		Discount disc = testUtils.createDefaultDiscount(d);
 		d.addDiscount(disc);
 		
-		PricelistItem item = createDefaultPriceListItem(d);
+		PricelistItem item = testUtils.createDefaultPriceListItem(d);
 		d.addPricelistItem(item);
 		doctordao.insert(d);
 	}
@@ -106,8 +108,8 @@ public class PatientTest {
 				patient.setSurname("Surname"+i);
 				patient.setComments("comments"+i);
 				patient.setCreated(new Date());
-				patient.setPatientHistory(createDefaultPatientHistory(patient, createDefaultActivity(d,p,disc)));
-				patient.setMedicalhistory(createDefaultMedicalHistory(patient));
+				patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
+				patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
 				d.addPatient(patient);
 				patientDao.insert(patient);
 			}
@@ -141,8 +143,8 @@ public class PatientTest {
 			patient.setSurname("Surname"+11);
 			patient.setComments("comments"+11);
 			patient.setCreated(new Date());
-			patient.setPatientHistory(createDefaultPatientHistory(patient, createDefaultActivity(doctor,p,disc)));
-			patient.setMedicalhistory(createDefaultMedicalHistory(patient));
+			patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(doctor,p,disc)));
+			patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
 			doctor.addPatient(patient);
 		} finally {
 			patientDao.getEntityManager().getTransaction().commit();
@@ -171,8 +173,8 @@ public class PatientTest {
 			patient.setSurname("Surname");
 			patient.setComments("comments");
 			patient.setCreated(new Date());
-			patient.setPatientHistory(createDefaultPatientHistory(patient, createDefaultActivity(d,p,disc)));
-			patient.setMedicalhistory(createDefaultMedicalHistory(patient));
+			patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
+			patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
 			d.addPatient(patient);
 			doctordao.insert(d);	
 		}finally{
@@ -225,8 +227,8 @@ public class PatientTest {
 				patient.setSurname("Surname"+i);
 				patient.setComments("comments"+i);
 				patient.setCreated(new Date());
-				patient.setPatientHistory(createDefaultPatientHistory(patient, createDefaultActivity(d,p,disc)));
-				patient.setMedicalhistory(createDefaultMedicalHistory(patient));
+				patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
+				patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
 				d.addPatient(patient);
 				patientDao.insert(patient);
 			}
@@ -251,51 +253,5 @@ public class PatientTest {
 	}
 	
 	
-	private Activity createDefaultActivity(Doctor d,PricelistItem p,Discount disc){
-		Activity ac = new Activity();
-		ac.setDescription(Activity.DEFAULT_ACTIVITY_IDENTIFIER_DESCR);
-		
-		ac.setDiscount(disc);
-		ac.setEnddate(null);
-		ac.setisOpen(true);
-		ac.setPrice(BigDecimal.ZERO);
-		ac.setPriceable(p);
-		ac.setStartdate(new Date());
-		return ac;
-	}
-	
-	private Discount createDefaultDiscount(Doctor d){
-		Discount disc = new Discount();
-		disc.setDoctor(d);
-		disc.setTitle("discount title");
-		disc.setDiscount(new BigDecimal(10.0));
-		disc.setDescription("some description...");
-		d.addDiscount(disc);
-		return disc;
-	}
-	
-	private PricelistItem createDefaultPriceListItem(Doctor d){
-		PricelistItem item = new PricelistItem();
-		item.setDoctor(d);
-		item.setDescription("some description...");
-		item.setTitle("price title ");
-		item.setPrice(new BigDecimal(112));
-		return item;
-	}
-	
-	private Medicalhistory createDefaultMedicalHistory(Patient p){
-		Medicalhistory medhistory = new Medicalhistory();
-		medhistory.setComments("Auto Generated");
-		medhistory.setPatient(p);
-		return medhistory;
-	}
-	
-	private PatientHistory createDefaultPatientHistory(Patient p, Activity ac){
-		PatientHistory history = new PatientHistory();
-		history.setComments("auto generated");
-		history.setStartdate(new Date());
-		history.setPatient(p);
-		history.addActivity(ac);
-		return history;
-	}
+
 }

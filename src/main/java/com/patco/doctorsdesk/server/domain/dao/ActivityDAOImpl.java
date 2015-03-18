@@ -20,7 +20,7 @@ public class ActivityDAOImpl extends GenericDAOImpl<Activity , Integer> implemen
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Patient> getPatientActivities(Patient patient) {
+	public List<Activity> getPatientActivities(Patient patient) {
 		Query q = getEntityManager().createNamedQuery(Activity.GETALL_PER_PATIENT)
 				  .setParameter("patient", patient);
 		return  q.getResultList();
