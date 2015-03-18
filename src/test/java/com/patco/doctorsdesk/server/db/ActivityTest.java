@@ -2,8 +2,6 @@ package com.patco.doctorsdesk.server.db;
 
 import static org.junit.Assert.assertEquals;
 
-
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -95,7 +93,7 @@ public class ActivityTest {
 	public void deleteDependencies(){
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		Patient p = patientDao.getDoctorsPatient(d).get(0);
-		List<Activity> activities = activityDao.getPatientActivities(p);
+		List<Activity> activities = activityDao.findAll();
 		for (Activity activity:activities){
 			activityDao.delete(activity);
 		}
@@ -109,50 +107,70 @@ public class ActivityTest {
 	
 	
 	@Test
-	public void createAndCount(){
-		try{
-			activityDao.getEntityManager().getTransaction().begin();
-			assertEquals(new Long(1),doctordao.countAll());
-			assertEquals(new Long(1), patientDao.countAll());
-			
-			Doctor d = doctordao.getDoctorByUserName("dpatakas");
-			PricelistItem p = d.getPriceList().get(0);
-			Discount disc = d.getDiscounts().get(0);
-			Patient patient = patientDao.getDoctorsPatient(d).get(0);
-			PatientHistory ph = patient.getPatientHistory();
-			for (int i = 0; i < 10; i++) {
-				Activity activity = new Activity();
-				activity.setDescription("Activity " +i);
-				
-				activity.setDiscount(disc);
-				activity.setStartdate(new Date());
-				activity.setEnddate(new Date(System.currentTimeMillis()+1000000));
-				activity.setisOpen(false);
-				activity.setPrice(BigDecimal.ZERO);
-				activity.setPriceable(p);
-				activity.setPatienthistory(ph);
-				ph.addActivity(activity);
-				activityDao.insert(activity);
-				patientHistoryDao.update(ph);
-			}
-			
-		}finally{
-			activityDao.getEntityManager().getTransaction().commit();
+	@Transactional
+	public void createAndCount() {
+		assertEquals(new Long(1), doctordao.countAll());
+		assertEquals(new Long(1), patientDao.countAll());
+
+		Doctor d = doctordao.getDoctorByUserName("dpatakas");
+		PricelistItem p = d.getPriceList().get(0);
+		Discount disc = d.getDiscounts().get(0);
+		Patient patient = patientDao.getDoctorsPatient(d).get(0);
+		PatientHistory ph = patient.getPatientHistory();
+		for (int i = 0; i < 10; i++) {
+			Activity activity = new Activity();
+			activity.setDescription("Activity " + i);
+
+			activity.setDiscount(disc);
+			activity.setStartdate(new Date());
+			activity.setEnddate(new Date(System.currentTimeMillis() + 1000000));
+			activity.setisOpen(false);
+			activity.setPrice(BigDecimal.ZERO);
+			activity.setPriceable(p);
+			activity.setPatienthistory(ph);
+			ph.addActivity(activity);
+			activityDao.insert(activity);
+
 		}
+
+		List<Activity> activities = activityDao.getPatientActivities(patient);
+		for (Activity activity : activities) {
+			assertEquals(false, activity.isOpen());
+			assertEquals(BigDecimal.ZERO, activity.getPrice());
+		}
+
+	}
+	
+	@Test
+	@Transactional
+	public void update(){
 		
-		try{
-			activityDao.getEntityManager().getTransaction().begin();
-			Doctor d = doctordao.getDoctorByUserName("dpatakas");
-			Patient patient = patientDao.getDoctorsPatient(d).get(0);
-			assertEquals(new Long(10), activityDao.countPatientActivities(patient));
-			List<Activity> activities = activityDao.getPatientActivities(patient);
-			for (Activity activity:activities){
-				assertEquals(false, activity.isOpen());
-				assertEquals(BigDecimal.ZERO, activity.getPrice());
-			}
-		}finally{
-			activityDao.getEntityManager().getTransaction().commit();
-		}
+		Doctor d = doctordao.getDoctorByUserName("dpatakas");	
+		PricelistItem p = d.getPriceList().get(0);
+		Discount disc = d.getDiscounts().get(0);
+		Patient patient = patientDao.getDoctorsPatient(d).get(0);
+		PatientHistory ph = patient.getPatientHistory();
+		Activity activity = new Activity();
+		activity.setDescription("Activity");
+		
+		activity.setDiscount(disc);
+		activity.setStartdate(new Date());
+		activity.setisOpen(true);
+		activity.setPrice(BigDecimal.ZERO);
+		activity.setPriceable(p);
+		activity.setPatienthistory(ph);
+		ph.addActivity(activity);
+		activityDao.insert(activity);
+
+		activity.setDescription("Altered Activity");
+		activity.setEnddate(new Date(System.currentTimeMillis()+1000000) );
+		activity.setisOpen(false);
+		activityDao.update(activity);
+		
+		
+		assertEquals(false, activityDao.getPatientActivities(patient).get(0).isOpen());
+		assertEquals(BigDecimal.ZERO, activityDao.getPatientActivities(patient).get(0).getPrice());
+		assertEquals("Altered Activity", activityDao.getPatientActivities(patient).get(0).getDescription());
 		
 	}
 	
