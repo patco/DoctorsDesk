@@ -1,7 +1,6 @@
 package com.patco.doctorsdesk.server.db;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -92,164 +91,103 @@ public class PatientTest {
 	}
 	
 	@Test
+	@Transactional
 	public void createAndCount(){
-		try {
-			patientDao.getEntityManager().getTransaction().begin();
-			assertEquals(new Long(1),doctordao.countAll());
-			assertEquals(new Long(0), patientDao.countAll());
-			
-			Doctor d = doctordao.getDoctorByUserName("dpatakas");
-			PricelistItem p = d.getPriceList().get(0);
-			Discount disc = d.getDiscounts().get(0);
-			for (int i = 0; i < 10; i++) {
-				Patient patient = new Patient();
-				patient.setDoctor(d);
-				patient.setName("Name"+i);
-				patient.setSurname("Surname"+i);
-				patient.setComments("comments"+i);
-				patient.setCreated(new Date());
-				patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
-				patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
-				d.addPatient(patient);
-				patientDao.insert(patient);
-			}
-			assertEquals(new Long(10), patientDao.countPatientPerDoctor(d));
-
-		} finally {
-			patientDao.getEntityManager().getTransaction().commit();
-		}
-		
-		try {
-			patientDao.getEntityManager().getTransaction().begin();
-			Doctor doctor=doctordao.getDoctorByUserName("dpatakas");
-			assertNotNull(doctor);
-			assertEquals(10, doctor.getPatientList().size());
-			assertEquals(new Long(10),patientDao.countPatientPerDoctor(doctor));
-			
-		} finally {
-			patientDao.getEntityManager().getTransaction().commit();
-		}
-		
-		try {
-			patientDao.getEntityManager().getTransaction().begin();
-			Doctor doctor=doctordao.getDoctorByUserName("dpatakas");
-			PricelistItem p = doctor.getPriceList().get(0);
-			Discount disc = doctor.getDiscounts().get(0);
-			assertNotNull(doctor);
-			assertEquals(10, doctor.getPatientList().size());
-			Patient patient = new Patient();
-			patient.setDoctor(doctor);
-			patient.setName("Name"+11);
-			patient.setSurname("Surname"+11);
-			patient.setComments("comments"+11);
-			patient.setCreated(new Date());
-			patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(doctor,p,disc)));
-			patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
-			doctor.addPatient(patient);
-		} finally {
-			patientDao.getEntityManager().getTransaction().commit();
-		}
-		
-		try {
-			patientDao.getEntityManager().getTransaction().begin();
-			Doctor doctor=doctordao.getDoctorByUserName("dpatakas");
-			assertEquals(new Long(11),patientDao.countPatientPerDoctor(doctor));
-		} finally {
-			patientDao.getEntityManager().getTransaction().commit();
-		}
-		
-	}
-	
-	@Test
-	public void update(){
-		try{
-			patientDao.getEntityManager().getTransaction().begin();
-			Doctor d=doctordao.getDoctorByUserName("dpatakas");
-			PricelistItem p = d.getPriceList().get(0);
-			Discount disc = d.getDiscounts().get(0);
+		assertEquals(new Long(1),doctordao.countAll());
+		assertEquals(new Long(0), patientDao.countAll());
+		Doctor d = doctordao.getDoctorByUserName("dpatakas");
+		PricelistItem p = d.getPriceList().get(0);
+		Discount disc = d.getDiscounts().get(0);
+		for (int i = 0; i < 10; i++) {
 			Patient patient = new Patient();
 			patient.setDoctor(d);
-			patient.setName("Name");
-			patient.setSurname("Surname");
-			patient.setComments("comments");
+			patient.setName("Name"+i);
+			patient.setSurname("Surname"+i);
+			patient.setComments("comments"+i);
 			patient.setCreated(new Date());
 			patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
 			patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
 			d.addPatient(patient);
-			doctordao.insert(d);	
-		}finally{
-			patientDao.getEntityManager().getTransaction().commit();
+			patientDao.insert(patient);
 		}
 		
-		try {
-			patientDao.getEntityManager().getTransaction().begin();
-			Doctor d = doctordao.getDoctorByUserName("dpatakas");
-			
-			List<Patient> patients = patientDao.getDoctorsPatient(d);
-			
-			for (Patient patient:patients){
-				patient.setName("altered Name");
-				patient.setSurname("altered Surname");
-				patient.setComments("altered comments");
-			}
-			
-		} finally {
-			patientDao.getEntityManager().getTransaction().commit();
-		}
+		assertEquals(10, d.getPatientList().size());
+		assertEquals(new Long(10),patientDao.countPatientPerDoctor(d));
 		
+		Patient patient = new Patient();
+		patient.setDoctor(d);
+		patient.setName("Name"+11);
+		patient.setSurname("Surname"+11);
+		patient.setComments("comments"+11);
+		patient.setCreated(new Date());
+		patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
+		patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+		d.addPatient(patient);
 		
-		try {
-			patientDao.getEntityManager().getTransaction().begin();
-            Doctor d = doctordao.getDoctorByUserName("dpatakas");
-			List<Patient> patients = patientDao.getDoctorsPatient(d);
-			for (Patient patient:patients){
-				assertEquals("altered comments", patient.getComments());
-				assertEquals("altered Surname", patient.getSurname());
-				assertEquals("altered Name", patient.getName());
-			}
-		} finally {
-			patientDao.getEntityManager().getTransaction().commit();
-		}
+		assertEquals(new Long(11),patientDao.countPatientPerDoctor(d));
+		
 	}
 	
 	@Test
-	public void delete(){
-		try {
-			patientDao.getEntityManager().getTransaction().begin();
-			Doctor d= doctordao.getDoctorByUserName("dpatakas");
-			assertEquals(new Long(0), patientDao.countAll());
-			PricelistItem p = d.getPriceList().get(0);
-			Discount disc = d.getDiscounts().get(0);
-			for (int i = 0; i < 10; i++) {
-				Patient patient = new Patient();
-				patient.setDoctor(d);
-				patient.setName("Name"+i);
-				patient.setSurname("Surname"+i);
-				patient.setComments("comments"+i);
-				patient.setCreated(new Date());
-				patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
-				patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
-				d.addPatient(patient);
-				patientDao.insert(patient);
-			}
-			assertEquals(new Long(10), patientDao.countPatientPerDoctor(d));
-
-		} finally {
-			patientDao.getEntityManager().getTransaction().commit();
+	@Transactional
+	public void update(){
+		Doctor d=doctordao.getDoctorByUserName("dpatakas");
+		PricelistItem p = d.getPriceList().get(0);
+		Discount disc = d.getDiscounts().get(0);
+		Patient patient = new Patient();
+		patient.setDoctor(d);
+		patient.setName("Name");
+		patient.setSurname("Surname");
+		patient.setComments("comments");
+		patient.setCreated(new Date());
+		patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
+		patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+		d.addPatient(patient);
+		doctordao.insert(d);	
+		
+		List<Patient> patients = patientDao.getDoctorsPatient(d);
+		for (Patient apatient:patients){
+			apatient.setName("altered Name");
+			apatient.setSurname("altered Surname");
+			apatient.setComments("altered comments");
 		}
 		
-		try{
-			patientDao.getEntityManager().getTransaction().begin();
-			Doctor d = doctordao.getDoctorByUserName("dpatakas");
-			List<Patient> patients = patientDao.getDoctorsPatient(d);
-			for (Patient patient:patients){
-				patientDao.delete(patient);
-			}
-			assertEquals(new Long(0), patientDao.countPatientPerDoctor(d));
-			
-		}finally{
-			patientDao.getEntityManager().getTransaction().commit();
+		List<Patient> altpatients = patientDao.getDoctorsPatient(d);
+		for (Patient apatient:altpatients){
+			assertEquals("altered comments", apatient.getComments());
+			assertEquals("altered Surname", apatient.getSurname());
+			assertEquals("altered Name", apatient.getName());
 		}
+		
+	}
+	
+	@Test
+	@Transactional
+	public void delete(){
+		Doctor d= doctordao.getDoctorByUserName("dpatakas");
+		assertEquals(new Long(0), patientDao.countAll());
+		PricelistItem p = d.getPriceList().get(0);
+		Discount disc = d.getDiscounts().get(0);
+		for (int i = 0; i < 10; i++) {
+			Patient patient = new Patient();
+			patient.setDoctor(d);
+			patient.setName("Name"+i);
+			patient.setSurname("Surname"+i);
+			patient.setComments("comments"+i);
+			patient.setCreated(new Date());
+			patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
+			patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+			d.addPatient(patient);
+			patientDao.insert(patient);
+		}
+		
+		assertEquals(new Long(10), patientDao.countPatientPerDoctor(d));
+		
+		List<Patient> patients = patientDao.getDoctorsPatient(d);
+		for (Patient patient:patients){
+			patientDao.delete(patient);
+		}
+		assertEquals(new Long(0), patientDao.countPatientPerDoctor(d));
 	}
 	
 	
