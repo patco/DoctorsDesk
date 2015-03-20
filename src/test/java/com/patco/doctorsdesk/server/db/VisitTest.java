@@ -24,11 +24,13 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientHistoryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.VisitDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
+import com.patco.doctorsdesk.server.domain.entities.Visit;
 
 
 @RunWith(JukitoRunner.class)
@@ -55,6 +57,9 @@ public class VisitTest {
 	
 	@Inject 
 	ActivityDAO activityDao;
+	
+	@Inject
+	VisitDAO visitDao;
 	
 	@Inject 
 	TestUtils testUtils;
@@ -117,16 +122,80 @@ public class VisitTest {
 			activityDao.delete(activity);
 		}
 		patientDao.delete(p);
+		doctordao.delete(d);
+		assertEquals(new Long(0), doctordao.countAll());
 		assertEquals(new Long(0), patientDao.countAll());
 		assertEquals(new Long(0), activityDao.countAll());
 		assertEquals(new Long(0), patientHistoryDao.countAll());
 		assertEquals(new Long(0), medicalHistoryDao.countAll());
+		assertEquals(new Long(0), visitDao.countAll());
 	}
 	
 	
 	@Test
-	public void createAndCount(){
-		assertEquals(new Long(0), new Long(0));
+	@Transactional
+	public void createAndCount(){		
+		Doctor d = doctordao.getDoctorByUserName("dpatakas");
+		Patient p = d.getPatientList().get(0);
+		Activity act = activityDao.getPatientActivities(p).get(0);
+		Visit v1 =createVisit(p, act, new Date(start+50000), new Date(start+60000) ,1);
+		visitDao.insert(v1);
+		Visit v2 =createVisit(p, act, new Date(start+80000), new Date(start+90000) ,1);
+		visitDao.insert(v2);
+		Visit v3 =createVisit(p, act, new Date(start+20000), null ,1);
+		visitDao.insert(v3);
+		
+		List<Visit> visits = visitDao.getActivityVisits(act);
+		for (Visit visit:visits){
+			assertEquals(true, visit.getTitle().contains("Visit"));
+			assertEquals(true, visit.getComments().contains("some comment"));
+		}
+		
+		assertEquals(new Long(3), visitDao.countAll());
+		assertEquals(new Long(3), visitDao.countActivityVisits(act));
 	}
+	
+	@Test
+	@Transactional
+	public void delete(){
+		Doctor d = doctordao.getDoctorByUserName("dpatakas");
+		Patient p = d.getPatientList().get(0);
+		Activity act = activityDao.getPatientActivities(p).get(0);
+		Visit v1 =createVisit(p, act, new Date(start+50000), new Date(start+60000) ,1);
+		visitDao.insert(v1);
+		Visit v2 =createVisit(p, act, new Date(start+80000), new Date(start+90000) ,1);
+		visitDao.insert(v2);
+		Visit v3 =createVisit(p, act, new Date(start+20000), null ,1);
+		visitDao.insert(v3);
+		
+		assertEquals(3, act.getVisits().size());
+		
+		for (Visit visit:visitDao.getActivityVisits(act)){
+			visitDao.delete(visit);
+		}
+		
+		assertEquals(0, act.getVisits().size());
+		assertEquals(new Long(0), visitDao.countActivityVisits(act));
+		assertEquals(new Long(0), visitDao.countAll());
+	}
+	
+	
+	
+	private Visit createVisit(Patient p,Activity act, Date start, Date end,int i){
+		Visit v = new Visit();
+		v.setComments("some comment " +i);
+		v.setVisitdate(start);
+		if (end!=null)
+		  v.setEnddate(end);
+		v.setColor(2);
+		v.setTitle("Visit "+i);
+		v.setDeposit(BigDecimal.ZERO);
+		v.setActivity(act);
+		act.addVisit(v);
+		
+		return v;
+	}
+	
+	
 
 }

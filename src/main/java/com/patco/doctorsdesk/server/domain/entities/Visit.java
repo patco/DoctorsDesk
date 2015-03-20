@@ -27,7 +27,7 @@ import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 @NamedQuery(name="Visit.CountAll", query="SELECT count(v) FROM Visit v"),
 @NamedQuery(name="Visit.CountPerPatient", query="SELECT count(v) FROM Visit v WHERE v.activity.patienthistory.patient =:patient"),
 @NamedQuery(name="Visit.GetAllPerPatient", query="SELECT v FROM Visit v WHERE v.activity.patienthistory.patient =:patient"),
-@NamedQuery(name="Visit.CountPerActivity", query="SELECT v FROM Visit v WHERE v.activity =:activity"),
+@NamedQuery(name="Visit.CountPerActivity", query="SELECT count(v) FROM Visit v WHERE v.activity =:activity"),
 @NamedQuery(name="Visit.GetAllPerActivity", query="SELECT v FROM Visit v WHERE v.activity =:activity")
 })
 public class Visit extends DBEntity<Integer> implements Serializable {
