@@ -20,6 +20,7 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
@@ -36,7 +37,7 @@ public class DiscountTest {
 	
 	@Before
 	@Transactional
-	public void createDependencies(){
+	public void createDependencies() throws ValidationException{
 		Doctor d= new Doctor();
 		d.setName("Dimitris");
 		d.setSurname("Patakas");
@@ -63,7 +64,7 @@ public class DiscountTest {
 	
 	@Test
 	@Transactional
-	public void createAndCount(){
+	public void createAndCount() throws ValidationException{
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		for (int i = 0; i < 10; i++) {
 			Discount disc = new Discount();
@@ -89,7 +90,7 @@ public class DiscountTest {
 	
 	@Test
 	@Transactional
-	public void update(){
+	public void update() throws ValidationException{
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		Discount disc = new Discount();
 		disc.setDoctor(d);
@@ -117,7 +118,7 @@ public class DiscountTest {
 	
 	@Test
 	@Transactional
-	public void delete(){
+	public void delete() throws ValidationException{
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		for (int i = 0; i < 10; i++) {
 			Discount disc = new Discount();

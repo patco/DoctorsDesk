@@ -12,7 +12,9 @@
     <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
     <!-- Other module inherits -->
-    <inherits name='com.gwtplatform.dispatch.Dispatch' />
+	<inherits name='com.gwtplatform.dispatch.Dispatch' />
+	<inherits name="com.gwtplatform.dispatch.rest.DispatchRest"/>
+	<inherits name="com.gwtplatform.dispatch.rest.delegates.ResourceDelegate"/>
     <inherits name='com.gwtplatform.mvp.MvpWithEntryPoint' />
     <inherits name="com.wallissoftware.pushstate.PushState" />
     <inherits name="com.smartgwt.SmartGwtNoScript" />

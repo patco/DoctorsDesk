@@ -1,18 +1,29 @@
 package com.patco.doctorsdesk.server.domain.dao;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.patco.doctorsdesk.server.domain.dao.base.GenericDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 
 public class DoctorDAOImpl extends GenericDAOImpl<Doctor, Integer> implements DoctorDAO{
+	
+	private static Logger LOG = LoggerFactory.getLogger(DoctorDAOImpl.class);
 
 	@Override
 	public Doctor getDoctorByUserName(String userName) {
 		Query q = getEntityManager().createNamedQuery(Doctor.GETBYUSERNAME)
 				  .setParameter("username", userName);
-		return  (Doctor) q.getSingleResult();
+		try{      
+			return (Doctor) q.getSingleResult();
+		}catch(NoResultException noresult){
+			LOG.info("No Doctor with user name" + userName +" exists");
+			return null;
+		}	
 	}
 
 }

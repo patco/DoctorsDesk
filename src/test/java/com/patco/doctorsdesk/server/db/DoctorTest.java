@@ -16,6 +16,7 @@ import com.google.inject.persist.Transactional;
 import com.patco.doctorsdesk.server.db.utils.DatabaseModule;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
@@ -36,7 +37,7 @@ public class DoctorTest {
 
 	@Test
 	@Transactional
-	public void createDoctors() {
+	public void createDoctors() throws ValidationException {
 		assertEquals(new Long(0), doctordao.countAll());
 		for (int i = 0; i < 10; i++) {
 			Doctor d = new Doctor();
@@ -51,7 +52,7 @@ public class DoctorTest {
 
 	@Test
 	@Transactional
-	public void deleteDoctors() {
+	public void deleteDoctors() throws ValidationException {
 		for (int i = 0; i < 10; i++) {
 			Doctor d = new Doctor();
 			d.setName("DoctorName" + i);
@@ -79,7 +80,7 @@ public class DoctorTest {
 	
 	@Test
 	@Transactional
-	public void updateDoctors(){
+	public void updateDoctors() throws ValidationException{
 		Doctor d = new Doctor();
 		d.setName("Dimitris");
 		d.setSurname("Patakas");

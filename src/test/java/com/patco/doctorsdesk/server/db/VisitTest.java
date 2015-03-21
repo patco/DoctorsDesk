@@ -31,6 +31,7 @@ import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
 import com.patco.doctorsdesk.server.domain.entities.Visit;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 
 @RunWith(JukitoRunner.class)
@@ -68,7 +69,7 @@ public class VisitTest {
 	
 	@Before
 	@Transactional
-	public void setupTest(){
+	public void setupTest() throws ValidationException{
 		Doctor d= new Doctor();
 		d.setName("Dimitris");
 		d.setSurname("Patakas");
@@ -91,6 +92,7 @@ public class VisitTest {
 		patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, null));
 		patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
 		d.addPatient(patient);
+		patientDao.insert(patient);
 		
 		Activity activity = new Activity();
 		activity.setDescription("Activity 1");
@@ -134,7 +136,7 @@ public class VisitTest {
 	
 	@Test
 	@Transactional
-	public void createAndCount(){		
+	public void createAndCount() throws ValidationException{		
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		Patient p = d.getPatientList().get(0);
 		Activity act = activityDao.getPatientActivities(p).get(0);
@@ -157,7 +159,7 @@ public class VisitTest {
 	
 	@Test
 	@Transactional
-	public void delete(){
+	public void delete() throws ValidationException{
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		Patient p = d.getPatientList().get(0);
 		Activity act = activityDao.getPatientActivities(p).get(0);

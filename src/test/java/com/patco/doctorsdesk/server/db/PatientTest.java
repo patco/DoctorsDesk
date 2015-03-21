@@ -28,6 +28,7 @@ import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
@@ -59,7 +60,7 @@ public class PatientTest {
 	
 	@Before
 	@Transactional
-	public void createDependencies(){
+	public void createDependencies() throws ValidationException{
 		Doctor d= new Doctor();
 		d.setName("Dimitris");
 		d.setSurname("Patakas");
@@ -92,7 +93,7 @@ public class PatientTest {
 	
 	@Test
 	@Transactional
-	public void createAndCount(){
+	public void createAndCount() throws ValidationException{
 		assertEquals(new Long(1),doctordao.countAll());
 		assertEquals(new Long(0), patientDao.countAll());
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
@@ -130,7 +131,7 @@ public class PatientTest {
 	
 	@Test
 	@Transactional
-	public void update(){
+	public void update() throws ValidationException{
 		Doctor d=doctordao.getDoctorByUserName("dpatakas");
 		PricelistItem p = d.getPriceList().get(0);
 		Discount disc = d.getDiscounts().get(0);
@@ -163,7 +164,7 @@ public class PatientTest {
 	
 	@Test
 	@Transactional
-	public void delete(){
+	public void delete() throws ValidationException{
 		Doctor d= doctordao.getDoctorByUserName("dpatakas");
 		assertEquals(new Long(0), patientDao.countAll());
 		PricelistItem p = d.getPriceList().get(0);

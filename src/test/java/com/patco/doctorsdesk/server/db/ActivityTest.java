@@ -30,6 +30,7 @@ import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.PatientHistory;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
@@ -61,7 +62,7 @@ public class ActivityTest {
 	
 	@Before
 	@Transactional
-	public void createDependencies(){
+	public void createDependencies() throws ValidationException{
 		Doctor d= new Doctor();
 		d.setName("Dimitris");
 		d.setSurname("Patakas");
@@ -108,7 +109,7 @@ public class ActivityTest {
 	
 	@Test
 	@Transactional
-	public void createAndCount() {
+	public void createAndCount() throws ValidationException {
 		assertEquals(new Long(1), doctordao.countAll());
 		assertEquals(new Long(1), patientDao.countAll());
 
@@ -143,7 +144,7 @@ public class ActivityTest {
 	
 	@Test
 	@Transactional
-	public void update(){
+	public void update() throws ValidationException{
 		
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");	
 		PricelistItem p = d.getPriceList().get(0);

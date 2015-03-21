@@ -5,10 +5,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolationException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
+import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 public abstract class GenericDAOImpl<E extends DBEntity<?>, P> implements
 		GenericDAO<E, P> {
@@ -19,8 +22,13 @@ public abstract class GenericDAOImpl<E extends DBEntity<?>, P> implements
 	private Class<E> entityClass;
 
 	@SuppressWarnings("unchecked")
-	public P insert(E entity) {
-		emp.get().persist(entity);
+	public P insert(E entity) throws ValidationException{
+		try {
+			emp.get().persist(entity);
+		} catch (ConstraintViolationException e) {
+			throw DoctorsDeskUtils.createValidationException(e);
+
+		}
 		return (P) entity.getId();
 	}
 

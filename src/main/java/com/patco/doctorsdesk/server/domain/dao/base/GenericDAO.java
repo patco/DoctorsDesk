@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 public interface GenericDAO<E extends DBEntity<?>, P> {
 
@@ -14,7 +15,7 @@ public interface GenericDAO<E extends DBEntity<?>, P> {
 	 * @param entity
 	 * @return the primary key
 	 */
-	P insert(E entity);
+	P insert(E entity) throws ValidationException;
 
 	/**
 	 * Retrieve an object using indicated ID

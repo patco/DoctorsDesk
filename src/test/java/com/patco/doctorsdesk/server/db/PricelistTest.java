@@ -20,6 +20,7 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
+import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
@@ -32,7 +33,7 @@ public class PricelistTest {
 	
 	@Before
 	@Transactional
-	public void setupTest(){
+	public void setupTest() throws ValidationException{
 		Doctor d= new Doctor();
 		d.setName("Dimitris");
 		d.setSurname("Patakas");
@@ -59,7 +60,7 @@ public class PricelistTest {
 	
 	@Test
 	@Transactional
-	public void createAndCount(){
+	public void createAndCount() throws ValidationException{
 		Doctor d=doctordao.getDoctorByUserName("dpatakas");
 		for (int i = 0; i < 10; i++) {
 			PricelistItem item = new PricelistItem();
@@ -88,7 +89,7 @@ public class PricelistTest {
 	
 	@Test
 	@Transactional
-	public void update() {
+	public void update() throws ValidationException {
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		PricelistItem item = new PricelistItem();
 		item.setDoctor(d);
@@ -116,7 +117,7 @@ public class PricelistTest {
 	
 	@Test
 	@Transactional
-	public void delete(){
+	public void delete() throws ValidationException{
 		Doctor d = doctordao.getDoctorByUserName("dpatakas");
 		for (int i = 0; i < 10; i++) {
 			PricelistItem disc = new PricelistItem();
