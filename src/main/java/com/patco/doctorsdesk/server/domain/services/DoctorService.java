@@ -2,6 +2,8 @@ package com.patco.doctorsdesk.server.domain.services;
 
 import java.math.BigDecimal;
 
+import javax.validation.ConstraintViolationException;
+
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
@@ -11,6 +13,7 @@ import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
 import com.patco.doctorsdesk.server.domain.entities.UserPreferences;
+import com.patco.doctorsdesk.server.util.exceptions.DiscountNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.DoctorExistsException;
 import com.patco.doctorsdesk.server.util.exceptions.DoctorNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.PricelistItemNotFoundException;
@@ -18,24 +21,22 @@ import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
 
 public class DoctorService {
-	
-	
+
 	private final DoctorDAO doctordao;
 	private final DiscountDAO discountdao;
 	private final PricelistItemDAO pricelistItemdao;
-	
+
 	@Inject
-	public DoctorService(DoctorDAO doctordao,
-			             DiscountDAO discountdao,
-			             PricelistItemDAO pricelistItemdao) {
-		this.doctordao=doctordao;
+	public DoctorService(DoctorDAO doctordao, DiscountDAO discountdao,
+			PricelistItemDAO pricelistItemdao) {
+		this.doctordao = doctordao;
 		this.discountdao = discountdao;
-		this.pricelistItemdao=pricelistItemdao;
+		this.pricelistItemdao = pricelistItemdao;
 	}
-	
-	@Transactional
-	public Doctor createDentist(String name, String surname, 
-			                    String username,String password) throws DoctorsDeskException {
+
+	@Transactional(ignore=ConstraintViolationException.class)
+	public Doctor createDoctor(String name, String surname, String username,
+			String password) throws DoctorsDeskException, ValidationException {
 		if (doctordao.getDoctorByUserName(username) != null)
 			throw new DoctorExistsException(username);
 
@@ -59,28 +60,40 @@ public class DoctorService {
 		prefs.setReportemail(UserPreferences.DEFAULT_USER_REPORTEMAIL);
 		prefs.setDoctor(d);
 
+		doctordao.insert(d);
+
 		return d;
 	}
-	
+
 	@Transactional
-    public void deleteDentistByUsername(String username) throws DoctorNotFoundException {
-    	Doctor d;
-    	if ((d =doctordao.getDoctorByUserName(username)) == null)
+	public void deleteDoctorByUsername(String username)
+			throws DoctorNotFoundException {
+		Doctor d;
+		if ((d = doctordao.getDoctorByUserName(username)) == null)
 			throw new DoctorNotFoundException(username);
-    	
-    	doctordao.delete(d);
-    }
-	
-	//DISCOUNTS
+
+		doctordao.delete(d);
+	}
+
 	@Transactional
-	public Discount createDiscount(int doctorid, String title, String description, double value) 
-											throws DoctorNotFoundException, ValidationException {
+	public void deleteDoctor(int doctorId) throws DoctorNotFoundException {
+		Doctor d;
+		if ((d = doctordao.find(doctorId)) == null)
+			throw new DoctorNotFoundException(doctorId);
+		doctordao.delete(d);
+	}
+
+	// DISCOUNTS
+	@Transactional(ignore=ConstraintViolationException.class)
+	public Discount createDiscount(int doctorid, String title,
+			String description, double value) throws DoctorNotFoundException,
+			ValidationException {
 		Doctor doctor = findDoctor(doctorid);
-		
-		if (doctor==null) {
+
+		if (doctor == null) {
 			throw new DoctorNotFoundException(doctorid);
 		}
-		
+
 		Discount d = new Discount();
 		if (description == null)
 			d.setDescription("");
@@ -94,13 +107,22 @@ public class DoctorService {
 		return d;
 	}
 	
-	
-    //PRICABLES
 	@Transactional
-    public PricelistItem createPricelistItem(int doctorid, String title, String description, double value) 
-														throws DoctorNotFoundException, ValidationException {
-    	Doctor doctor = findDoctor(doctorid);
-		
+	public void deleteDiscount(int id) throws DiscountNotFoundException {
+		Discount d = discountdao.find(id);
+		if (d==null){
+			throw new DiscountNotFoundException(id);
+		}
+		discountdao.delete(d);
+	}
+
+	// PRICABLES
+	@Transactional(ignore=ConstraintViolationException.class)
+	public PricelistItem createPricelistItem(int doctorid, String title,
+			String description, double value) throws DoctorNotFoundException,
+			ValidationException {
+		Doctor doctor = findDoctor(doctorid);
+
 		PricelistItem item = new PricelistItem();
 		if (description == null)
 			item.setDescription("");
@@ -114,34 +136,32 @@ public class DoctorService {
 		pricelistItemdao.insert(item);
 		return item;
 	}
-	
+
 	@Transactional
-	public void deletePricelistItem(int id) throws PricelistItemNotFoundException {
+	public void deletePricelistItem(int id)
+			throws PricelistItemNotFoundException {
 		PricelistItem item = pricelistItemdao.find(id);
-		if (item==null)
+		if (item == null)
 			throw new PricelistItemNotFoundException(id);
 		item.getDoctor().removePricelistItem(item);
 		pricelistItemdao.delete(item);
-		
+
 	}
 
 	@Transactional
-	public void deletePricelist (int dentistid) throws DoctorNotFoundException {
+	public void deletePricelist(int dentistid) throws DoctorNotFoundException {
 		Doctor d = findDoctor(dentistid);
-		for (PricelistItem item : d.getPriceList()) {
+		for (PricelistItem item : pricelistItemdao.getDoctorsPriceListItems(d)) {
 			pricelistItemdao.delete(item);
 		}
 	}
-	
-    
-	private Doctor findDoctor(int doctorid) throws DoctorNotFoundException{
+
+	private Doctor findDoctor(int doctorid) throws DoctorNotFoundException {
 		Doctor doctor = doctordao.find(doctorid);
 		if (doctor == null) {
 			throw new DoctorNotFoundException(doctorid);
 		}
 		return doctor;
 	}
-	
-	
 
 }
