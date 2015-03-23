@@ -86,7 +86,7 @@ public class PatientService {
 		patientdao.delete(p);
 	}
 	
-	@Transactional
+	@Transactional(ignore=ConstraintViolationException.class)
 	public Activity createActivity(int patientid, String description,
 			                       Date start, Date end, 
 			                       int plitemid, int discountid, BigDecimal price)

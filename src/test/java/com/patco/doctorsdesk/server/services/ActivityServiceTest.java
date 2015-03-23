@@ -105,5 +105,27 @@ public class ActivityServiceTest {
 		}
 	}
 	
+	@Test
+	public void createActivityInvalidValues() throws PatientNotFoundException,
+			DiscountNotFoundException, PricelistItemNotFoundException,
+			DoctorNotFoundException, ValidationException {
+		Doctor d = doctordao.getDoctorByUserName("kpatakas");
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		PricelistItem item = doctorService.createPricelistItem(d.getId(),
+				"Price Item 1", "some price item", 10.0);
+		Discount discount = doctorService.createDiscount(d.getId(),
+				"Discount 1", "some discount", 10.0);
+		try {
+			patientService.createActivity(p.getId(), null, null, null,
+					item.getId(), discount.getId(), null);
+		} catch (ValidationException e) {
+			String msg = e.getMessage();
+			assertEquals(true,msg.contains("Property->DESCRIPTION on Entity->ACTIVITY may not be null"));
+			assertEquals(true,msg.contains("Property->STARTDATE on Entity->ACTIVITY may not be null"));
+			//assertEquals(true,msg.contains("Property->ENDDATE on Entity->ACTIVITY may not be null"));
+		}
+
+	}
+	
 
 }
