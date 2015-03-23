@@ -8,6 +8,7 @@ import com.patco.doctorsdesk.server.domain.dao.base.GenericDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
+import com.patco.doctorsdesk.server.util.exceptions.PatientNotFoundException;
 
 public class PatientDAOImpl extends GenericDAOImpl<Patient, Integer> implements PatientDAO{
 
@@ -30,6 +31,15 @@ public class PatientDAOImpl extends GenericDAOImpl<Patient, Integer> implements 
 	public void delete(Patient patient) {
 		patient.getDoctor().removePatient(patient);
 		super.delete(patient);
+	}
+
+	@Override
+	public Patient findOrFail(int patientid) throws PatientNotFoundException {
+		Patient patient = this.find(patientid);
+		if (patient == null) {
+			throw new PatientNotFoundException(patientid);
+		}
+		return patient;
 	}
 
 }

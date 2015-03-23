@@ -267,8 +267,7 @@ public class DoctorsDeskUtils {
 		return "";
 	}
 
-	public static String createEventTitle(int type, Patient p)
-			throws InvalidTitleFormatTypeException {
+	public static String createEventTitle(int type, Patient p) throws InvalidTitleFormatTypeException {
 		if (!DoctorsDeskUtils.isTitleFormatTypeValid(type))
 			throw new InvalidTitleFormatTypeException(type);
 

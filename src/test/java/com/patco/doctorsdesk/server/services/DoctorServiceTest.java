@@ -195,20 +195,5 @@ public class DoctorServiceTest {
 		doctorService.deletePricelist(-1);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 }

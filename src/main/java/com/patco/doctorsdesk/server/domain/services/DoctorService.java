@@ -88,7 +88,7 @@ public class DoctorService {
 	public Discount createDiscount(int doctorid, String title,
 			String description, double value) throws DoctorNotFoundException,
 			ValidationException {
-		Doctor doctor = findDoctor(doctorid);
+		Doctor doctor = doctordao.findOrFail(doctorid);
 
 		if (doctor == null) {
 			throw new DoctorNotFoundException(doctorid);
@@ -121,7 +121,7 @@ public class DoctorService {
 	public PricelistItem createPricelistItem(int doctorid, String title,
 			String description, double value) throws DoctorNotFoundException,
 			ValidationException {
-		Doctor doctor = findDoctor(doctorid);
+		Doctor doctor = doctordao.findOrFail(doctorid);
 
 		PricelistItem item = new PricelistItem();
 		if (description == null)
@@ -149,19 +149,11 @@ public class DoctorService {
 	}
 
 	@Transactional
-	public void deletePricelist(int dentistid) throws DoctorNotFoundException {
-		Doctor d = findDoctor(dentistid);
+	public void deletePricelist(int doctorid) throws DoctorNotFoundException {
+		Doctor d = doctordao.findOrFail(doctorid);
 		for (PricelistItem item : pricelistItemdao.getDoctorsPriceListItems(d)) {
 			pricelistItemdao.delete(item);
 		}
-	}
-
-	private Doctor findDoctor(int doctorid) throws DoctorNotFoundException {
-		Doctor doctor = doctordao.find(doctorid);
-		if (doctor == null) {
-			throw new DoctorNotFoundException(doctorid);
-		}
-		return doctor;
 	}
 
 }

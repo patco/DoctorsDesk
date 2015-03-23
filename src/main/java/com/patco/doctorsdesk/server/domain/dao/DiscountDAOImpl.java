@@ -8,6 +8,7 @@ import com.patco.doctorsdesk.server.domain.dao.base.GenericDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
+import com.patco.doctorsdesk.server.util.exceptions.DiscountNotFoundException;
 
 public class DiscountDAOImpl extends GenericDAOImpl<Discount, Integer> implements DiscountDAO{
 	
@@ -31,6 +32,15 @@ public class DiscountDAOImpl extends GenericDAOImpl<Discount, Integer> implement
 		Query q = getEntityManager().createNamedQuery(Discount.GETALL_PER_DOCTOR)
 				  .setParameter("doctor", doctor);
 		return  q.getResultList();
+	}
+
+	@Override
+	public Discount findOrFail(int id) throws DiscountNotFoundException {
+		Discount discount = this.find(id);
+		if (discount==null){
+			throw new DiscountNotFoundException(id);
+		}
+		return discount;
 	}
 
 }

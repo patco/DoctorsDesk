@@ -8,6 +8,7 @@ import com.patco.doctorsdesk.server.domain.dao.base.GenericDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
+import com.patco.doctorsdesk.server.util.exceptions.PricelistItemNotFoundException;
 
 public class PricelistItemDAOImpl  extends GenericDAOImpl<PricelistItem, Integer> implements PricelistItemDAO {
 	@Override
@@ -30,6 +31,17 @@ public class PricelistItemDAOImpl  extends GenericDAOImpl<PricelistItem, Integer
 				  .setParameter("doctor", doctor);
 		return q.getResultList();
 	}
+
+	@Override
+	public PricelistItem findOrFail(int id) throws PricelistItemNotFoundException {
+		PricelistItem item = this.find(id);
+		if (item==null){
+			throw new PricelistItemNotFoundException(id);
+		}
+		return item;
+	}
+	
+	
 	
 	
 		
