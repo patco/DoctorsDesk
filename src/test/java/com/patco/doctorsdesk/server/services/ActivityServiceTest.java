@@ -32,9 +32,10 @@ import com.patco.doctorsdesk.server.util.exceptions.PricelistItemNotFoundExcepti
 import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
 
+
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
-public class PatientServiceTest {
+public class ActivityServiceTest {
 	
 	@Inject
 	DoctorService doctorService;
@@ -53,8 +54,10 @@ public class PatientServiceTest {
 	
 	@Before
 	public void setupTest() throws ValidationException, DoctorsDeskException{
-		 doctorService.createDoctor("Kostas", "Patakas", "kpatakas", "passwd").getId();
+		 int docid = doctorService.createDoctor("Kostas", "Patakas", "kpatakas", "passwd").getId();
+		 patientService.createPatient(docid, "Oumpa","Mpaloumpa");
 		 assertEquals(new Long(1), doctordao.countAll());
+		 assertEquals(new Long(1), patientdao.countAll());
 	}
 	
 	@After
@@ -74,58 +77,33 @@ public class PatientServiceTest {
 	}
 	
 	@Test
-	public void createAndCountPatient() throws DoctorNotFoundException, PatientExistsException, ValidationException, DiscountNotFoundException, PricelistItemNotFoundException{
+	public void createActivity() throws DoctorNotFoundException,
+			PatientExistsException, ValidationException,
+			PatientNotFoundException, DiscountNotFoundException,
+			PricelistItemNotFoundException {
 		Doctor d = doctordao.getDoctorByUserName("kpatakas");
-		for (int i=0;i<4;i++){
-			patientService.createPatient(d.getId(), "Oumpa " + i, "Mpaloumpa " + i);	
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		PricelistItem item = doctorService.createPricelistItem(d.getId(),
+				"Price Item 1", "some price item", 10.0);
+		Discount discount = doctorService.createDiscount(d.getId(),
+				"Discount 1", "some discount", 10.0);
+
+		for (int i = 0; i < 3; i++) {
+			patientService.createActivity(p.getId(), "activity " + i,
+					new Date(), new Date(System.currentTimeMillis() + 1000000),
+					item.getId(), discount.getId(), null);
 		}
 		
-		List<Patient> patients = patientdao.findAll();
-		for (int i = 0; i < patients.size(); i++) {
-			Patient patient = patients.get(i);
-			assertEquals("Oumpa " +i, patient.getName());
-			assertEquals("Mpaloumpa "  +i, patient.getSurname());
-		}
+		assertEquals(new Long(3), activitydao.countPatientActivities(p));
 		
-		assertEquals(new Long(4), patientdao.countPatientPerDoctor(d));
-	}
-	
-	@Test(expected=DoctorNotFoundException.class)
-    public void createPatientToNonExistingDoctor() throws DoctorNotFoundException, PatientExistsException, ValidationException{
-		patientService.createPatient(-1, "Oumpa", "Mpaloumpa");
-    }
-	
-	@Test
-	public void createPatientInvalidValues() throws DoctorNotFoundException, PatientExistsException{
-		Doctor d = doctordao.getDoctorByUserName("kpatakas");
-		try {
-			patientService.createPatient(d.getId(), null,null);
-		} catch (ValidationException e) {
-			String msg = e.getMessage();
-			assertEquals(true, msg.contains("Property->NAME on Entity->PATIENT may not be null"));
-			assertEquals(true, msg.contains("Property->NAME on Entity->PATIENT may not be empty"));
-			assertEquals(true, msg.contains("Property->SURNAME on Entity->PATIENT may not be null"));
-			assertEquals(true, msg.contains("Property->SURNAME on Entity->PATIENT may not be empty"));
+		List<Activity> activities = activitydao.getPatientActivities(p);
+		for (int i=0;i<activities.size();i++){
+			Activity act = activities.get(i);
+			assertEquals("activity "+i, act.getDescription());
+			assertEquals(false, act.isOpen());
+			assertEquals(null, act.getPrice());
 		}
 	}
 	
-	@Test
-	public void deletePatient() throws DoctorNotFoundException, PatientExistsException, ValidationException, PatientNotFoundException{
-		Doctor d = doctordao.getDoctorByUserName("kpatakas");
-		for (int i=0;i<4;i++){
-			patientService.createPatient(d.getId(), "Oumpa " + i, "Mpaloumpa " + i);	
-		}
-		assertEquals(new Long(4), patientdao.countPatientPerDoctor(d));
-		List<Patient> patients = patientdao.getDoctorsPatient(d);
-		for(Patient patient:patients){
-			patientService.deletePatient(patient.getId());
-		}
-		assertEquals(new Long(0), patientdao.countPatientPerDoctor(d));
-	}
-	
-	@Test(expected=PatientNotFoundException.class)
-	public void deleteNonExistingPatient() throws PatientNotFoundException{
-		patientService.deletePatient(-1);
-	}
-	
+
 }

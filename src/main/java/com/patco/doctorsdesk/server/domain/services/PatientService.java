@@ -86,6 +86,7 @@ public class PatientService {
 		patientdao.delete(p);
 	}
 	
+	@Transactional
 	public Activity createActivity(int patientid, String description,
 			                       Date start, Date end, 
 			                       int plitemid, int discountid, BigDecimal price)
@@ -114,21 +115,19 @@ public class PatientService {
 		return ac;
 	}
 	
+	@Transactional
 	public void deleteActivity(int activityid) throws ActivityNotFoundException {
 		Activity act = activitydao.findOrFail(activityid);
 		act.getPatienthistory().removeActivity(act);
 		activitydao.delete(act);
 	}
 	
+	@Transactional
 	public void deletePatientActivities(int patientid) throws PatientNotFoundException, ActivityNotFoundException {
 		Patient p = patientdao.findOrFail(patientid);
 		for (Activity activity:activitydao.getPatientActivities(p)){
 			activitydao.delete(activity);
 		}
 	}
-	
-	
-	
-	
 
 }
