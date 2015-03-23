@@ -2,7 +2,6 @@ package com.patco.doctorsdesk.server.services;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
 import java.util.List;
 
 import org.jukito.JukitoRunner;
@@ -17,11 +16,8 @@ import com.patco.doctorsdesk.server.db.utils.DatabaseModule;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
-import com.patco.doctorsdesk.server.domain.entities.Activity;
-import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
-import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
 import com.patco.doctorsdesk.server.domain.services.DoctorService;
 import com.patco.doctorsdesk.server.domain.services.PatientService;
 import com.patco.doctorsdesk.server.util.exceptions.DiscountNotFoundException;
