@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import com.patco.doctorsdesk.server.db.utils.DatabaseModule;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
@@ -46,6 +47,9 @@ public class PatientServiceTest {
 	
 	@Inject 
 	ActivityDAO activitydao;
+	
+	@Inject 
+	MedicalhistoryEntryDAO medicalhistoryEntrydao;
 	
 	@Before
 	public void setupTest() throws ValidationException, DoctorsDeskException{

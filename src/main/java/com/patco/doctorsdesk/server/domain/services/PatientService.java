@@ -10,12 +10,15 @@ import com.google.inject.persist.Transactional;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Medicalhistory;
+import com.patco.doctorsdesk.server.domain.entities.Medicalhistoryentry;
+import com.patco.doctorsdesk.server.domain.entities.MedicalhistoryentryPK;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.PatientHistory;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
@@ -34,18 +37,22 @@ public class PatientService {
 	private final ActivityDAO activitydao;
 	private final DiscountDAO discountdao;
 	private final PricelistItemDAO pricelistitemdao;
+	private final MedicalhistoryEntryDAO medicalhistoryEntrydao;
+	
 
 	@Inject
 	public PatientService(PatientDAO patientdao,
 			              DoctorDAO doctordao,
 			              DiscountDAO discountdao,
 			              ActivityDAO activitydao,
-			              PricelistItemDAO pricelistitemdao) {
+			              PricelistItemDAO pricelistitemdao,
+			              MedicalhistoryEntryDAO medicalhistoryEntrydao) {
 		this.patientdao = patientdao;
 		this.doctordao = doctordao;
 		this.discountdao = discountdao;
 		this.activitydao = activitydao;
 		this.pricelistitemdao = pricelistitemdao;
+		this.medicalhistoryEntrydao=medicalhistoryEntrydao;
 	}
 
 	@Transactional(ignore=ConstraintViolationException.class)
@@ -128,6 +135,32 @@ public class PatientService {
 		for (Activity activity:activitydao.getPatientActivities(p)){
 			activitydao.delete(activity);
 		}
+	}
+	
+	@Transactional
+	public Medicalhistoryentry createMedicalEntry(int patientID,String comment) throws PatientNotFoundException {
+		Patient p = patientdao.findOrFail(patientID);
+		Medicalhistory hstr = p.getMedicalhistory();
+
+		MedicalhistoryentryPK id = new MedicalhistoryentryPK();
+		id.setAdded(new Date());
+		id.setId(hstr.getId().getId());
+		Medicalhistoryentry entry = new Medicalhistoryentry();
+		entry.setComments(comment);
+		entry.setId(id);
+		entry.setMedicalhistory(hstr);
+		hstr.addMedicalEntry(entry);
+		medicalhistoryEntrydao.insert(entry);
+		
+		return entry;
+	}
+
+	@Transactional
+	public void deleteMedicalEntry(Medicalhistoryentry entry)
+			throws PatientNotFoundException {
+		Patient p = patientdao.findOrFail(entry.getId().getId());
+		p.getMedicalhistory().deleteMedicalEntry(entry);
+		medicalhistoryEntrydao.delete(entry);
 	}
 
 }

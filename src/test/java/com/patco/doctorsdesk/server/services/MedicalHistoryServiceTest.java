@@ -2,7 +2,6 @@ package com.patco.doctorsdesk.server.services;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Date;
 import java.util.List;
 
 import org.jukito.JukitoRunner;
@@ -16,26 +15,25 @@ import com.google.inject.Inject;
 import com.patco.doctorsdesk.server.db.utils.DatabaseModule;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
-import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
+import com.patco.doctorsdesk.server.domain.entities.Medicalhistoryentry;
+import com.patco.doctorsdesk.server.domain.entities.MedicalhistoryentryPK;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
-import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
 import com.patco.doctorsdesk.server.domain.services.DoctorService;
 import com.patco.doctorsdesk.server.domain.services.PatientService;
-import com.patco.doctorsdesk.server.util.exceptions.DiscountNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.DoctorNotFoundException;
-import com.patco.doctorsdesk.server.util.exceptions.PatientExistsException;
 import com.patco.doctorsdesk.server.util.exceptions.PatientNotFoundException;
-import com.patco.doctorsdesk.server.util.exceptions.PricelistItemNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
 
 
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
-public class ActivityServiceTest {
+public class MedicalHistoryServiceTest {
+	
 	
 	@Inject
 	DoctorService doctorService;
@@ -49,8 +47,9 @@ public class ActivityServiceTest {
 	@Inject 
 	PatientDAO patientdao;
 	
+	
 	@Inject 
-	ActivityDAO activitydao;
+	MedicalhistoryEntryDAO medicalhistorydao;
 	
 	@Before
 	public void setupTest() throws ValidationException, DoctorsDeskException{
@@ -73,58 +72,50 @@ public class ActivityServiceTest {
 		
 		assertEquals(new Long(0), doctordao.countAll());
 		assertEquals(new Long(0), patientdao.countAll());
-		assertEquals(new Long(0), activitydao.countAll());
+		assertEquals(new Long(0), medicalhistorydao.countAll());
 	}
 	
 	@Test
-	public void createActivity() throws DoctorNotFoundException,
-			PatientExistsException, ValidationException,
-			PatientNotFoundException, DiscountNotFoundException,
-			PricelistItemNotFoundException {
+	public void createMedicalHistoryEntry() throws PatientNotFoundException{
 		Doctor d = doctordao.getDoctorByUserName("kpatakas");
 		Patient p = patientdao.getDoctorsPatient(d).get(0);
-		PricelistItem item = doctorService.createPricelistItem(d.getId(),
-				"Price Item 1", "some price item", 10.0);
-		Discount discount = doctorService.createDiscount(d.getId(),
-				"Discount 1", "some discount", 10.0);
-
-		for (int i = 0; i < 3; i++) {
-			patientService.createActivity(p.getId(), "activity " + i,
-					new Date(), new Date(System.currentTimeMillis() + 1000000),
-					item.getId(), discount.getId(), null);
+		for(int i=0;i<4;i++){
+		  patientService.createMedicalEntry(p.getId(), "some comment " +i);
 		}
 		
-		assertEquals(new Long(3), activitydao.countPatientActivities(p));
+		assertEquals(new Long(4), medicalhistorydao.countAll());
+		assertEquals(4, p.getMedicalhistory().getEntries().size());
 		
-		List<Activity> activities = activitydao.getPatientActivities(p);
-		for (int i=0;i<activities.size();i++){
-			Activity act = activities.get(i);
-			assertEquals("activity "+i, act.getDescription());
-			assertEquals(false, act.isOpen());
-			assertEquals(null, act.getPrice());
+		List<Medicalhistoryentry> entries = medicalhistorydao.findAll();
+		for (int i=0;i<entries.size();i++){
+			Medicalhistoryentry entry = entries.get(i);
+			assertEquals("some comment " +i, entry.getComments());
 		}
 	}
 	
 	@Test
-	public void createActivityInvalidValues() throws PatientNotFoundException,
-			DiscountNotFoundException, PricelistItemNotFoundException,
-			DoctorNotFoundException, ValidationException {
+	public void deleteMedicalHistoryEntry() throws PatientNotFoundException{
 		Doctor d = doctordao.getDoctorByUserName("kpatakas");
 		Patient p = patientdao.getDoctorsPatient(d).get(0);
-		PricelistItem item = doctorService.createPricelistItem(d.getId(),
-				"Price Item 1", "some price item", 10.0);
-		Discount discount = doctorService.createDiscount(d.getId(),
-				"Discount 1", "some discount", 10.0);
-		try {
-			patientService.createActivity(p.getId(), null, null, null,
-					item.getId(), discount.getId(), null);
-		} catch (ValidationException e) {
-			String msg = e.getMessage();
-			assertEquals(true,msg.contains("Property->DESCRIPTION on Entity->ACTIVITY may not be null"));
-			assertEquals(true,msg.contains("Property->STARTDATE on Entity->ACTIVITY may not be null"));
+		for(int i=0;i<4;i++){
+		  patientService.createMedicalEntry(p.getId(), "some comment " +i);
 		}
-
+		assertEquals(new Long(4), medicalhistorydao.countAll());
+		
+		for (Medicalhistoryentry entry:medicalhistorydao.findAll()){
+			patientService.deleteMedicalEntry(entry);
+		}
+		
+		assertEquals(new Long(0), medicalhistorydao.countAll());
 	}
 	
+	@Test(expected=PatientNotFoundException.class)
+	public void deleteMedicalEntryNonExistingPatient() throws PatientNotFoundException{
+		Medicalhistoryentry entry = new Medicalhistoryentry();
+		MedicalhistoryentryPK pk = new MedicalhistoryentryPK();
+		pk.setId(-1);
+		entry.setId(pk);
+		patientService.deleteMedicalEntry(entry);
+	}
 
 }
