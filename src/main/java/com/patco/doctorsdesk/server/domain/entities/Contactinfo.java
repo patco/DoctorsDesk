@@ -6,11 +6,19 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 import com.patco.doctorsdesk.server.util.DoctorsDeskUtils;
 
+
+
 @Entity
+@NamedQueries({
+@NamedQuery(name="Contactinfo.GetAll", query="SELECT c FROM Contactinfo c"),
+@NamedQuery(name="Contactinfo.CountAll", query="SELECT count(c) FROM Contactinfo c")
+})
 public class Contactinfo extends DBEntity<ContactinfoPK> implements Serializable {
 
 	private static final long serialVersionUID = -6983189179488067227L;

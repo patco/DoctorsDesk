@@ -8,12 +8,16 @@ import javax.validation.ConstraintViolationException;
 import com.google.inject.Inject;
 import com.google.inject.persist.Transactional;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.AddressDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.ContactInfoDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
+import com.patco.doctorsdesk.server.domain.entities.Address;
+import com.patco.doctorsdesk.server.domain.entities.Contactinfo;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.Medicalhistory;
@@ -38,6 +42,8 @@ public class PatientService {
 	private final DiscountDAO discountdao;
 	private final PricelistItemDAO pricelistitemdao;
 	private final MedicalhistoryEntryDAO medicalhistoryEntrydao;
+	private final ContactInfoDAO contactInfodao;
+	private final AddressDAO addressdao;
 	
 
 	@Inject
@@ -46,13 +52,17 @@ public class PatientService {
 			              DiscountDAO discountdao,
 			              ActivityDAO activitydao,
 			              PricelistItemDAO pricelistitemdao,
-			              MedicalhistoryEntryDAO medicalhistoryEntrydao) {
+			              MedicalhistoryEntryDAO medicalhistoryEntrydao,
+			              ContactInfoDAO contactInfodao,
+			              AddressDAO addressdao) {
 		this.patientdao = patientdao;
 		this.doctordao = doctordao;
 		this.discountdao = discountdao;
 		this.activitydao = activitydao;
 		this.pricelistitemdao = pricelistitemdao;
 		this.medicalhistoryEntrydao=medicalhistoryEntrydao;
+		this.contactInfodao = contactInfodao;
+		this.addressdao = addressdao;
 	}
 
 	@Transactional(ignore=ConstraintViolationException.class)
@@ -140,18 +150,16 @@ public class PatientService {
 	@Transactional
 	public Medicalhistoryentry createMedicalEntry(int patientID,String comment) throws PatientNotFoundException {
 		Patient p = patientdao.findOrFail(patientID);
-		Medicalhistory hstr = p.getMedicalhistory();
-
 		MedicalhistoryentryPK id = new MedicalhistoryentryPK();
 		id.setAdded(new Date());
-		id.setId(hstr.getId().getId());
+		id.setId(p.getMedicalhistory().getId().getId());
 		Medicalhistoryentry entry = new Medicalhistoryentry();
 		entry.setComments(comment);
 		entry.setId(id);
-		entry.setMedicalhistory(hstr);
-		hstr.addMedicalEntry(entry);
+		p.getMedicalhistory().addMedicalEntry(entry);
+		entry.setMedicalhistory(p.getMedicalhistory());
 		medicalhistoryEntrydao.insert(entry);
-		
+		patientdao.update(p);
 		return entry;
 	}
 
@@ -161,6 +169,26 @@ public class PatientService {
 		Patient p = patientdao.findOrFail(entry.getId().getId());
 		p.getMedicalhistory().deleteMedicalEntry(entry);
 		medicalhistoryEntrydao.delete(entry);
+	}
+	
+	@Transactional
+	public Contactinfo createContactinfo(Contactinfo info) throws PatientNotFoundException {
+		Patient p = patientdao.findOrFail(info.getId().getId());
+		p.addContactInfo(info);
+		info.setPatient(p);
+		contactInfodao.insert(info);
+		return info;
+	}
+
+	@Transactional
+	public Address createAddress(Address address) throws PatientNotFoundException {
+		Patient p = patientdao.findOrFail(address.getId().getId());
+		
+		// Address object enforces valid id.addressType , no need to check...
+		p.addAddress(address);
+		addressdao.insert(address);
+		
+		return address;
 	}
 
 }

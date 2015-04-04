@@ -56,6 +56,13 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 	@NotNull
 	@NotEmpty
 	private String surname;
+	
+	//AMKA
+	private String socialsecurityNumber;
+	//AMA
+	private String registryNumber;
+	
+	private String securityInstitution;
 
 	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient")
@@ -232,6 +239,31 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 		
 	}
 	
+	public String getRegistryNumber() {
+		return registryNumber;
+	}
+
+	public void setRegistryNumber(String registryNumber) {
+		this.registryNumber = registryNumber;
+	}
+	
+	public String getSocialsecurityNumber() {
+		return socialsecurityNumber;
+	}
+
+	public void setSocialsecurityNumber(String socialsecurityNumber) {
+		this.socialsecurityNumber = socialsecurityNumber;
+	}
+	
+
+	public String getSecurityInstitution() {
+		return securityInstitution;
+	}
+
+	public void setSecurityInstitution(String securityInstitution) {
+		this.securityInstitution = securityInstitution;
+	}
+
 	@Override
 	public String getXML() {
 		StringBuilder ans= new StringBuilder("<patient></patient>");
@@ -239,6 +271,10 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 		ans.insert(ans.indexOf("</patient"), "<name>"+name+"</name>");
 		ans.insert(ans.indexOf("</patient"), "<surname>"+surname+"</surname>");
 		ans.insert(ans.indexOf("</patient"), "<created>"+created+"</created>");
+		ans.insert(ans.indexOf("</patient"), "<socialsecurityNumber>"+socialsecurityNumber+"</socialsecurityNumber>");
+		ans.insert(ans.indexOf("</patient"), "<registryNumber>"+registryNumber+"</registryNumber>");
+		ans.insert(ans.indexOf("</patient"), "<securityInstitution>"+securityInstitution+"</securityInstitution>");
+		
 		ans.insert(ans.indexOf("</patient"), "<comments>"+comments+"</comments>");
 		
 		ans.insert(ans.indexOf("</patient"), "<contactinfo>");
@@ -255,8 +291,13 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 
 		ans.insert(ans.indexOf("</patient"), "</mouth>");
 		ans.insert(ans.indexOf("</patient"), patientHistory.getXML());
+		
+		
 		return ans.toString();
 	}
+
+
+
 
 
 }

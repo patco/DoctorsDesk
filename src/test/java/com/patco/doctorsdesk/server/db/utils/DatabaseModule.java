@@ -7,6 +7,7 @@ import com.google.inject.persist.PersistService;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.patco.doctorsdesk.server.domain.dao.ActivityDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.AddressDAOImpl;
+import com.patco.doctorsdesk.server.domain.dao.ContactInfoDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.DiscountDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.DoctorDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.MedicalhistoryDAOImpl;
@@ -19,6 +20,7 @@ import com.patco.doctorsdesk.server.domain.dao.UserPreferencesDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.VisitDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.AddressDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.ContactInfoDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryDAO;
@@ -50,6 +52,7 @@ public class DatabaseModule extends AbstractModule {
 		bind(MedicalhistoryDAO.class).to(MedicalhistoryDAOImpl.class);
 		bind(ActivityDAO.class).to(ActivityDAOImpl.class);
 		bind(VisitDAO.class).to(VisitDAOImpl.class);
+		bind(ContactInfoDAO.class).to(ContactInfoDAOImpl.class);
 		bind(TestUtils.class);
 
 	}
