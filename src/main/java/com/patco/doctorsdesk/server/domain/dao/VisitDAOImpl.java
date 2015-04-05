@@ -9,6 +9,7 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.VisitDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.Visit;
+import com.patco.doctorsdesk.server.util.exceptions.VisitNotFoundException;
 
 public class VisitDAOImpl extends GenericDAOImpl<Visit, Integer> implements VisitDAO{
 
@@ -46,6 +47,15 @@ public class VisitDAOImpl extends GenericDAOImpl<Visit, Integer> implements Visi
 	public void delete(Visit visit) {
 		visit.getActivity().removeVisit(visit);
 		super.delete(visit);
+	}
+
+	@Override
+	public Visit findOrFail(Integer id) throws VisitNotFoundException{
+		Visit visit = find(id);
+		if (visit==null){
+			throw new VisitNotFoundException(id);
+		}
+		return visit;
 	}
 
 }

@@ -6,6 +6,7 @@ import com.patco.doctorsdesk.server.domain.dao.base.GenericDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.Visit;
+import com.patco.doctorsdesk.server.util.exceptions.VisitNotFoundException;
 
 
 public interface VisitDAO extends GenericDAO<Visit, Integer>{
@@ -15,4 +16,7 @@ public interface VisitDAO extends GenericDAO<Visit, Integer>{
 	
 	Long countPatientVisits(Patient patient);
 	List<Visit> getPatientVisits(Patient patient);
+	
+	Visit findOrFail(Integer id) throws VisitNotFoundException;
+	
 }

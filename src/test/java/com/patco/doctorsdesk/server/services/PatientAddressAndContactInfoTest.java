@@ -188,10 +188,4 @@ public class PatientAddressAndContactInfoTest {
 		patientService.createContactinfo(info);
 	}
 	
-	
-	
-	
-	
-	
-
 }

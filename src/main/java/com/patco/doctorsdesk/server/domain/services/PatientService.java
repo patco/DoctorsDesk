@@ -2,6 +2,7 @@ package com.patco.doctorsdesk.server.domain.services;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
@@ -15,6 +16,7 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.VisitDAO;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
 import com.patco.doctorsdesk.server.domain.entities.Address;
 import com.patco.doctorsdesk.server.domain.entities.Contactinfo;
@@ -26,6 +28,7 @@ import com.patco.doctorsdesk.server.domain.entities.MedicalhistoryentryPK;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.PatientHistory;
 import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
+import com.patco.doctorsdesk.server.domain.entities.Visit;
 import com.patco.doctorsdesk.server.util.exceptions.ActivityNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.DiscountNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.DoctorNotFoundException;
@@ -33,6 +36,7 @@ import com.patco.doctorsdesk.server.util.exceptions.PatientExistsException;
 import com.patco.doctorsdesk.server.util.exceptions.PatientNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.PricelistItemNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
+import com.patco.doctorsdesk.server.util.exceptions.VisitNotFoundException;
 
 public class PatientService {
 
@@ -44,6 +48,7 @@ public class PatientService {
 	private final MedicalhistoryEntryDAO medicalhistoryEntrydao;
 	private final ContactInfoDAO contactInfodao;
 	private final AddressDAO addressdao;
+	private final VisitDAO visitdao;
 	
 
 	@Inject
@@ -54,7 +59,8 @@ public class PatientService {
 			              PricelistItemDAO pricelistitemdao,
 			              MedicalhistoryEntryDAO medicalhistoryEntrydao,
 			              ContactInfoDAO contactInfodao,
-			              AddressDAO addressdao) {
+			              AddressDAO addressdao,
+			              VisitDAO visitdao) {
 		this.patientdao = patientdao;
 		this.doctordao = doctordao;
 		this.discountdao = discountdao;
@@ -63,6 +69,7 @@ public class PatientService {
 		this.medicalhistoryEntrydao=medicalhistoryEntrydao;
 		this.contactInfodao = contactInfodao;
 		this.addressdao = addressdao;
+		this.visitdao=visitdao;
 	}
 
 	@Transactional(ignore=ConstraintViolationException.class)
@@ -190,5 +197,105 @@ public class PatientService {
 		
 		return address;
 	}
+	
+	@Transactional
+	public Visit createVisit(int activityID, String comments, String title, 
+			                 Date start, Date end, double deposit, int color) throws ActivityNotFoundException {
+
+		Activity act = activitydao.findOrFail(activityID);
+		try {
+			validateVisit(act, start, end);
+		} catch (ValidationException e) {
+			throw e;
+		}
+
+		Visit v = new Visit();
+		v.setComments(comments);
+		v.setVisitdate(start);
+		v.setEnddate(end);
+		v.setColor(color);
+		v.setTitle(title);
+		v.setDeposit(BigDecimal.valueOf(deposit));
+		v.setActivity(act);
+		act.addVisit(v);
+
+		visitdao.insert(v);
+		return v;
+	}
+	
+	@Transactional
+	public void deleteVisit(int visitid) throws VisitNotFoundException {
+		Visit v = visitdao.findOrFail(visitid);
+		v.getActivity().removeVisit(v);
+		visitdao.delete(v);
+	}
+
+	public void deleteActivityVisits(int activityid)
+			throws PatientNotFoundException, VisitNotFoundException,
+			ActivityNotFoundException {
+		Activity act = activitydao.findOrFail(activityid);
+		for (Visit visit : visitdao.getActivityVisits(act)) {
+			deleteVisit(visit.getId());
+		}
+	}
+
+	public void deletePatientVisits(int patientid)
+			throws PatientNotFoundException, VisitNotFoundException,
+			ActivityNotFoundException {
+		Patient patient = patientdao.findOrFail(patientid);
+		List<Activity> acts = activitydao.getPatientActivities(patient);
+		for (Activity act : acts) {
+			deleteActivityVisits(act.getId());
+		}
+	}
+	
+	
+	// PRIVATE
+	// validate the [start date, end date] time period against the visits of the
+	// underlying patient. enddate may be null (open visits)
+	private void validateVisit(Activity act, Date start, Date end)
+			throws ValidationException, ActivityNotFoundException {
+		if (start == null)
+			throw new ValidationException("Visit START date cannot be NULL");
+		long vtstart = start.getTime();
+		long vtend = end.getTime();
+		// visit dates should make sense ..
+		if (vtend <= vtstart)
+			throw new ValidationException(
+					"Visit END date must come after the START date");
+
+		if (act.isOpen()) { // visit on an open activity
+			if (vtstart <= act.getStartdate().getTime())
+				throw new ValidationException(
+						"Patient doesnt exist at that date");
+		} else {
+			// visit on a closed activity
+			long acstart = act.getStartdate().getTime();
+			long acend = act.getEnddate().getTime();
+			// visit dates should be within activity dates
+			if (acstart > vtstart || acend < vtend)
+				throw new ValidationException(
+						"Visit START and END date must be within the respective Activity dates");
+		}
+		// if first visit we are good
+		if (act.getVisits().size() <= 0)
+			return;
+
+		// visits cannot overlap one another,try and find a spot
+		// among PATIENT visits NOT just ACTIVITY visits
+		boolean invalid = false;
+		for (Visit vt : visitdao.getPatientVisits(act.getPatienthistory().getPatient())){
+			if (vtend < vt.getVisitdate().getTime()
+					|| vtstart > vt.getEnddate().getTime())
+				continue;
+			invalid = true;
+		}
+		// overlaps some existing visit
+		if (invalid)
+			throw new ValidationException(
+					"Visit dates cannot OVERLAP one another");
+	}
+	
+	
 
 }

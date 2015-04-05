@@ -29,7 +29,7 @@
 		    <property name="eclipselink.logging.level.sql" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:file:.test/db/doctorsdesk" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:file:./test/db/doctorsdesk" />
 			<property name="hibernate.connection.username" value="sa" />
 			<property name="hibernate.connection.password" value="" />
 			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
