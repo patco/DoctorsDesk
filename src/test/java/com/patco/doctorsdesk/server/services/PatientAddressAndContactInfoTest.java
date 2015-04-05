@@ -108,6 +108,40 @@ public class PatientAddressAndContactInfoTest {
 		
 	}
 	
+	@Test(expected=PatientNotFoundException.class)
+	public void createAdressInvalidPatient() throws InvalidAddressTypeException, PatientNotFoundException{
+		Address a = new Address();
+		AddressPK pk = new AddressPK();
+		pk.setAdrstype(1);
+		pk.setId(-1);
+		a.setId(pk);
+		a.setCity("City 1");
+		a.setNumber(1);
+		a.setCountry("Country");
+		a.setStreet("Street");
+		a.setPostalcode("14231");
+		patientService.createAddress(a);
+	}
+	
+	@Test(expected=InvalidAddressTypeException.class)
+	public void createAddressInvalidAddressType() throws InvalidAddressTypeException, PatientNotFoundException{
+		Doctor d = doctordao.getDoctorByUserName("kpatakas");
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		Address a = new Address();
+		AddressPK pk = new AddressPK();
+		pk.setAdrstype(-14);
+		pk.setId(p.getId());
+		a.setId(pk);
+		a.setCity("City 1");
+		a.setNumber(1);
+		a.setCountry("Country 1");
+		a.setPatient(p);
+		a.setStreet("Street 1");
+		a.setPostalcode("14231");
+		patientService.createAddress(a);
+	}
+	
+	
 	@Test
 	public void createContactInfo() throws InvalidContactInfoTypeException, PatientNotFoundException {
 		Doctor d = doctordao.getDoctorByUserName("kpatakas");
@@ -129,6 +163,34 @@ public class PatientAddressAndContactInfoTest {
 		}
 
 	}
+	
+	@Test(expected=PatientNotFoundException.class)
+	public void createContactInfoInvalidPatient() throws InvalidContactInfoTypeException, PatientNotFoundException{
+		Contactinfo info = new Contactinfo();
+		ContactinfoPK pk = new ContactinfoPK();
+		pk.setId(-1);
+		pk.setInfotype(1);
+		info.setId(pk);
+		info.setInfo("Some info");
+		patientService.createContactinfo(info);
+	}
+	
+	@Test(expected=InvalidContactInfoTypeException.class)
+	public void createContactInfoInvalidInfoType() throws InvalidContactInfoTypeException, PatientNotFoundException{
+		Doctor d = doctordao.getDoctorByUserName("kpatakas");
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		Contactinfo info = new Contactinfo();
+		ContactinfoPK pk = new ContactinfoPK();
+		pk.setId(p.getId());
+		pk.setInfotype(-1);
+		info.setId(pk);
+		info.setInfo("Some info");
+		patientService.createContactinfo(info);
+	}
+	
+	
+	
+	
 	
 	
 
