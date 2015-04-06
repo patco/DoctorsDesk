@@ -22,8 +22,8 @@
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
       <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:file:./db/doctorsdesk" />
-	  <property name="hibernate.connection.username" value="sa" />
-	  <property name="hibernate.connection.password" value="" />
+      <property name="javax.persistence.jdbc.user" value="sa" />
+      <property name="javax.persistence.jdbc.password" value="" />
 
       <!-- EclipseLink should create the database schema automatically -->
       <property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
