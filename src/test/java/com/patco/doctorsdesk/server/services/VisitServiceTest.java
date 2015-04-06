@@ -26,8 +26,10 @@ import com.patco.doctorsdesk.server.domain.entities.PricelistItem;
 import com.patco.doctorsdesk.server.domain.services.DoctorService;
 import com.patco.doctorsdesk.server.domain.services.PatientService;
 import com.patco.doctorsdesk.server.util.exceptions.ActivityNotFoundException;
+import com.patco.doctorsdesk.server.util.exceptions.DiscountNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.DoctorNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.PatientNotFoundException;
+import com.patco.doctorsdesk.server.util.exceptions.PricelistItemNotFoundException;
 import com.patco.doctorsdesk.server.util.exceptions.ValidationException;
 import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
 
@@ -54,6 +56,8 @@ public class VisitServiceTest {
 	VisitDAO visitdao;
 	
 	private long start;
+	private PricelistItem item;
+	private Discount discount;
 	
 	@Before
 	public void setupTest() throws ValidationException, DoctorsDeskException {
@@ -61,10 +65,10 @@ public class VisitServiceTest {
 				"passwd").getId();
 		Patient p =patientService.createPatient(docid, "Oumpa", "Mpaloumpa");
 
-		PricelistItem item = doctorService.createPricelistItem(docid,"Price Item 1", "some price item", 10.0);
-		Discount discount = doctorService.createDiscount(docid,"Discount 1", "some discount", 10.0);
+		item = doctorService.createPricelistItem(docid,"Price Item 1", "some price item", 10.0);
+		discount = doctorService.createDiscount(docid,"Discount 1", "some discount", 10.0);
 		start= System.currentTimeMillis();
-		patientService.createActivity(p.getId(), "activity 1",new Date(), new Date(start + 1000000),item.getId(), discount.getId(), null);
+		patientService.createActivity(p.getId(), "activity 1",new Date(start), new Date(start + 1000000),item.getId(), discount.getId(), null);
 		assertEquals(new Long(1), doctordao.countAll());
 		assertEquals(new Long(1), patientdao.countAll());
 		assertEquals(new Long(1), activitydao.countAll());
@@ -97,4 +101,43 @@ public class VisitServiceTest {
 
 		assertEquals(new Long(3), visitdao.countAll());
 	}
+	
+	@Test(expected=ActivityNotFoundException.class)
+	public void createVisitInvalidActivity() throws ActivityNotFoundException{
+		patientService.createVisit(-1, "some Comment 1", "Visit 1", null, new Date(start+60000), 0, 1);
+	}
+	
+	@Test(expected=ValidationException.class)
+	public void createVisitNullStartDate() throws ActivityNotFoundException{
+		Doctor d = doctordao.getDoctorByUserName("kpatakas");
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		Activity act= p.getPatientHistory().getActivities().get(0);
+		patientService.createVisit(act.getId(), "some Comment 1", "Visit 1", null, new Date(start+60000), 0, 1);
+	}
+	
+	@Test(expected=ValidationException.class)
+	public void createVisitEndDateLessThanStart() throws ActivityNotFoundException{
+		Doctor d = doctordao.getDoctorByUserName("kpatakas");
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		Activity act= p.getPatientHistory().getActivities().get(0);
+		patientService.createVisit(act.getId(), "some Comment 1", "Visit 1", new Date(start+70000), new Date(start+60000), 0, 1);
+		
+	}
+	
+	@Test(expected=ValidationException.class)
+	public void createVisitStartDateLessThanActivityStartDate() throws PatientNotFoundException, DiscountNotFoundException, PricelistItemNotFoundException, ActivityNotFoundException{
+		Doctor d = doctordao.getDoctorByUserName("kpatakas");
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		Activity act=patientService.createActivity(p.getId(), "activity 2",new Date(start), null,item.getId(), discount.getId(), null);
+		patientService.createVisit(act.getId(), "some Comment 1", "Visit 1", new Date(start-50000), new Date(start+60000), 0, 1);
+	}
+	
+	@Test(expected=ValidationException.class)
+	public void createVisitDatesNotBetweenActivityDates() throws PatientNotFoundException, DiscountNotFoundException, PricelistItemNotFoundException, ActivityNotFoundException{
+		Doctor d = doctordao.getDoctorByUserName("kpatakas");
+		Patient p = patientdao.getDoctorsPatient(d).get(0);
+		Activity act=patientService.createActivity(p.getId(), "activity 3",new Date(start), new Date(start + 1000000),item.getId(), discount.getId(), null);
+		patientService.createVisit(act.getId(), "some Comment 1", "Visit 1", new Date(start + 50000), new Date(start+1000001), 0, 1);
+	}
+	
 }

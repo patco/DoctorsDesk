@@ -278,7 +278,7 @@ public class PatientService {
 						"Visit START and END date must be within the respective Activity dates");
 		}
 		// if first visit we are good
-		if (act.getVisits().size() <= 0)
+		if (act.getVisits()==null||act.getVisits().isEmpty())
 			return;
 
 		// visits cannot overlap one another,try and find a spot
