@@ -35,7 +35,6 @@
     </control>
     <control controlID="37" controlTypeID="com.balsamiq.mockups::TabBar" x="369" y="86" w="1025" h="637" measuredW="291" measuredH="100" zOrder="7" locked="false" isInGroup="-1">
       <controlProperties>
-        <map>%3Carea%20shape%3D%22rect%22%20coords%3D%22436%2C76%2C535%2C101%22%20href%3D%22CalendarMonth.bmml%22%20alt%3D%22CalendarMonth%22%20id%3D%2237_0%22/%3E%0A</map>
         <selectedIndex>0</selectedIndex>
         <text>General%2CMedical%20History%2CActivities</text>
       </controlProperties>
