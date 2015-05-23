@@ -22,7 +22,8 @@
 		<class>com.patco.doctorsdesk.server.domain.entities.PrescriptionEntry</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.Medicine</class>
 		<class>com.patco.doctorsdesk.server.domain.entities.UserPreferences</class>
-
+		<class>com.patco.doctorsdesk.server.domain.entities.LabDataEntry</class>
+		<class>com.patco.doctorsdesk.server.domain.entities.LabDataHistory</class>
 		<exclude-unlisted-classes />
 
 		<properties>

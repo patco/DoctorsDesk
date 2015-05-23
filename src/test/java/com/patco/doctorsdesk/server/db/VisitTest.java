@@ -183,7 +183,7 @@ public class VisitTest {
 	
 	
 	
-	private Visit createVisit(Patient p,Activity act, Date start, Date end,int i){
+	private Visit createVisit(Patient p,Activity act, Date start, Date end,int i) {
 		Visit v = new Visit();
 		v.setComments("some comment " +i);
 		v.setVisitdate(start);

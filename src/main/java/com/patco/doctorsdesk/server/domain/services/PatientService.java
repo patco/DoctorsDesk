@@ -13,6 +13,7 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.AddressDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ContactInfoDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.LabDataEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PricelistItemDAO;
@@ -22,6 +23,8 @@ import com.patco.doctorsdesk.server.domain.entities.Address;
 import com.patco.doctorsdesk.server.domain.entities.Contactinfo;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
+import com.patco.doctorsdesk.server.domain.entities.LabDataEntry;
+import com.patco.doctorsdesk.server.domain.entities.LabEntryPK;
 import com.patco.doctorsdesk.server.domain.entities.Medicalhistory;
 import com.patco.doctorsdesk.server.domain.entities.Medicalhistoryentry;
 import com.patco.doctorsdesk.server.domain.entities.MedicalhistoryentryPK;
@@ -49,6 +52,7 @@ public class PatientService {
 	private final ContactInfoDAO contactInfodao;
 	private final AddressDAO addressdao;
 	private final VisitDAO visitdao;
+	private final LabDataEntryDAO labDataEntrydao;
 	
 
 	@Inject
@@ -60,7 +64,8 @@ public class PatientService {
 			              MedicalhistoryEntryDAO medicalhistoryEntrydao,
 			              ContactInfoDAO contactInfodao,
 			              AddressDAO addressdao,
-			              VisitDAO visitdao) {
+			              VisitDAO visitdao,
+			              LabDataEntryDAO labDataEntrydao) {
 		this.patientdao = patientdao;
 		this.doctordao = doctordao;
 		this.discountdao = discountdao;
@@ -70,6 +75,7 @@ public class PatientService {
 		this.contactInfodao = contactInfodao;
 		this.addressdao = addressdao;
 		this.visitdao=visitdao;
+		this.labDataEntrydao = labDataEntrydao;
 	}
 
 	@Transactional(ignore=ConstraintViolationException.class)
@@ -176,6 +182,44 @@ public class PatientService {
 		Patient p = patientdao.findOrFail(entry.getId().getId());
 		p.getMedicalhistory().deleteMedicalEntry(entry);
 		medicalhistoryEntrydao.delete(entry);
+	}
+	
+	
+	@Transactional
+    public LabDataEntry createLabEntry(int patientID,double value,String type) throws PatientNotFoundException{
+    	Patient p = patientdao.findOrFail(patientID);
+    	LabEntryPK id= new LabEntryPK();
+    	id.setAdded(new Date());
+    	id.setPatientId(p.getId());
+    	id.setType(type);
+    	LabDataEntry entry = new LabDataEntry();
+    	entry.setId(id);
+    	entry.setValue(value);
+
+    	p.getLabDataHistory().addLabEntry(entry);
+    	entry.setLabdatahistory(p.getLabDataHistory());
+    	labDataEntrydao.insert(entry);
+    	patientdao.update(p);
+    	return entry;
+    }
+	
+	@Transactional
+	public void deleteLabEntry(LabDataEntry entry) throws PatientNotFoundException{
+		Patient p = patientdao.findOrFail(entry.getId().getPatientId());
+		p.getLabDataHistory().deleteLabEntry(entry);
+		labDataEntrydao.delete(entry);
+	}
+	
+	@Transactional
+	public void deleteLabEntriesPerDate(int patientid,Date date) throws PatientNotFoundException{
+		Patient p = patientdao.findOrFail(patientid);
+		List<LabDataEntry> entries= labDataEntrydao.getLabDataPerPatientAndDate(p, date);
+		if (entries!=null && !entries.isEmpty()){
+			for (LabDataEntry entry:entries){
+				p.getLabDataHistory().deleteLabEntry(entry);
+				labDataEntrydao.delete(entry);
+			}
+		}
 	}
 	
 	@Transactional

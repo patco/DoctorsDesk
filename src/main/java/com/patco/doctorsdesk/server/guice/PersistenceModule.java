@@ -7,6 +7,8 @@ import com.patco.doctorsdesk.server.domain.dao.AddressDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.ContactInfoDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.DiscountDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.DoctorDAOImpl;
+import com.patco.doctorsdesk.server.domain.dao.LabDataEntryDAOImpl;
+import com.patco.doctorsdesk.server.domain.dao.LabDataHistoryDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.MedicalhistoryDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.MedicalhistoryEntryDAOImpl;
 import com.patco.doctorsdesk.server.domain.dao.MedicineDAOImpl;
@@ -20,6 +22,8 @@ import com.patco.doctorsdesk.server.domain.dao.interfaces.AddressDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ContactInfoDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.LabDataEntryDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.LabDataHistoryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryEntryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicineDAO;
@@ -49,6 +53,8 @@ public class PersistenceModule extends AbstractModule {
 		bind(ActivityDAO.class).to(ActivityDAOImpl.class);
 		bind(VisitDAO.class).to(VisitDAOImpl.class);
 		bind(ContactInfoDAO.class).to(ContactInfoDAOImpl.class);
+		bind(LabDataEntryDAO.class).to(LabDataEntryDAOImpl.class);
+		bind(LabDataHistoryDAO.class).to(LabDataHistoryDAOImpl.class);
 	}
 
 }
