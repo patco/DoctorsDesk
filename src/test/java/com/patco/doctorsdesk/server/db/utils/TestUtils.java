@@ -6,6 +6,7 @@ import java.util.Date;
 import com.patco.doctorsdesk.server.domain.entities.Activity;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
+import com.patco.doctorsdesk.server.domain.entities.LabDataHistory;
 import com.patco.doctorsdesk.server.domain.entities.Medicalhistory;
 import com.patco.doctorsdesk.server.domain.entities.Patient;
 import com.patco.doctorsdesk.server.domain.entities.PatientHistory;
@@ -61,4 +62,11 @@ public class TestUtils {
 		}
 		return history;
 	}
+	
+	public LabDataHistory createDefaultLabDataHistory(Patient p){
+		LabDataHistory labdatahistory = new LabDataHistory();
+		labdatahistory.setPatient(p);
+		return labdatahistory;
+	}
+
 }

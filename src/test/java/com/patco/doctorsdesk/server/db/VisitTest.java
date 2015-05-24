@@ -91,6 +91,7 @@ public class VisitTest {
 		patient.setCreated(new Date());
 		patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, null));
 		patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+		patient.setLabDataHistory(testUtils.createDefaultLabDataHistory(patient));
 		d.addPatient(patient);
 		patientDao.insert(patient);
 		

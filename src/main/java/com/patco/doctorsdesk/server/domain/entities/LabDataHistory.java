@@ -1,20 +1,24 @@
 package com.patco.doctorsdesk.server.domain.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.patco.doctorsdesk.server.domain.entities.base.DBEntity;
 
 @Entity
+@NamedQueries({
+@NamedQuery(name="LabDataHistory.GetAll", query="SELECT l FROM LabDataHistory l"),
+@NamedQuery(name="LabDataHistory.CountAll", query="SELECT count(l) FROM LabDataHistory l")})
 public class LabDataHistory extends DBEntity<Patient> implements Serializable {
 
 	private static final long serialVersionUID = 2605611435296170641L;
@@ -25,7 +29,7 @@ public class LabDataHistory extends DBEntity<Patient> implements Serializable {
 	private Patient patient;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "labdatahistory")
-	private List<LabDataEntry> entries;
+	private Set<LabDataEntry> entries;
 
 	@Override
 	public Patient getId() {
@@ -40,13 +44,13 @@ public class LabDataHistory extends DBEntity<Patient> implements Serializable {
 		this.patient = patient;
 	}
 
-	public List<LabDataEntry> getEntries() {
+	public Set<LabDataEntry> getEntries() {
 		return entries;
 	}
 
 	public void addLabEntry(LabDataEntry entry) {
 		if (entries == null)
-			entries = new ArrayList<LabDataEntry>();
+			entries = new HashSet<LabDataEntry>();
 
 		entries.add(entry);
 	}
@@ -69,7 +73,7 @@ public class LabDataHistory extends DBEntity<Patient> implements Serializable {
 	public String getXML() {
 		StringBuilder ans = new StringBuilder(
 				"<labdatahistory></labdatahistory>");
-		List<LabDataEntry> entries = getEntries();
+		Set<LabDataEntry> entries = getEntries();
 		for (LabDataEntry entry : entries) {
 			ans.insert(ans.indexOf("</labdatahistory"), entry.getXML());
 		}

@@ -72,6 +72,7 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient")
 	private PatientHistory patientHistory;
 	
+	@NotNull
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "patient")
 	private LabDataHistory labDataHistory;
 
@@ -118,7 +119,7 @@ public class Patient extends DBEntity<Integer> implements Serializable {
 	}
 
 	public LabDataHistory getLabDataHistory() {
-		return labDataHistory;
+		return this.labDataHistory;
 	}
 
 	public PatientHistory getPatientHistory() {

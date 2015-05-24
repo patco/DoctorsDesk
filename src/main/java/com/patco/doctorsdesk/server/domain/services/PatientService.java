@@ -24,6 +24,7 @@ import com.patco.doctorsdesk.server.domain.entities.Contactinfo;
 import com.patco.doctorsdesk.server.domain.entities.Discount;
 import com.patco.doctorsdesk.server.domain.entities.Doctor;
 import com.patco.doctorsdesk.server.domain.entities.LabDataEntry;
+import com.patco.doctorsdesk.server.domain.entities.LabDataHistory;
 import com.patco.doctorsdesk.server.domain.entities.LabEntryPK;
 import com.patco.doctorsdesk.server.domain.entities.Medicalhistory;
 import com.patco.doctorsdesk.server.domain.entities.Medicalhistoryentry;
@@ -94,6 +95,10 @@ public class PatientService {
 		Medicalhistory medhistory = new Medicalhistory();
 		medhistory.setComments("");
 		medhistory.setPatient(p);
+		
+		LabDataHistory labdatahistory = new LabDataHistory();
+		labdatahistory.setPatient(p);
+		
 
 		PatientHistory patientlhistory = new PatientHistory();
 		patientlhistory.setComments("");
@@ -103,6 +108,7 @@ public class PatientService {
 		p.setDoctor(doctor);
 		p.setMedicalhistory(medhistory);
 		p.setPatientHistory(patientlhistory);
+		p.setLabDataHistory(labdatahistory);
 		doctor.addPatient(p);
 
 		patientdao.insert(p);
@@ -186,10 +192,10 @@ public class PatientService {
 	
 	
 	@Transactional
-    public LabDataEntry createLabEntry(int patientID,double value,String type) throws PatientNotFoundException{
+    public LabDataEntry createLabEntry(int patientID,double value,String type,Date date) throws PatientNotFoundException{
     	Patient p = patientdao.findOrFail(patientID);
     	LabEntryPK id= new LabEntryPK();
-    	id.setAdded(new Date());
+    	id.setAdded(date);
     	id.setPatientId(p.getId());
     	id.setType(type);
     	LabDataEntry entry = new LabDataEntry();

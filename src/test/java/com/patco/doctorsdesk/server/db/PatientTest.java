@@ -19,6 +19,7 @@ import com.patco.doctorsdesk.server.db.utils.TestUtils;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.ActivityDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DiscountDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.DoctorDAO;
+import com.patco.doctorsdesk.server.domain.dao.interfaces.LabDataHistoryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.MedicalhistoryDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientDAO;
 import com.patco.doctorsdesk.server.domain.dao.interfaces.PatientHistoryDAO;
@@ -55,6 +56,9 @@ public class PatientTest {
 	@Inject 
 	PricelistItemDAO priceListDao;
 	
+	@Inject
+	LabDataHistoryDAO labdatahistorydao;
+	
 	@Inject 
 	TestUtils testUtils;
 	
@@ -89,6 +93,7 @@ public class PatientTest {
 		assertEquals(new Long(0), activityDao.countAll());
 		assertEquals(new Long(0), patientHistoryDao.countAll());
 		assertEquals(new Long(0), medicalHistoryDao.countAll());
+		assertEquals(new Long(0), labdatahistorydao.countAll());
 	}
 	
 	@Test
@@ -108,6 +113,7 @@ public class PatientTest {
 			patient.setCreated(new Date());
 			patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
 			patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+			patient.setLabDataHistory(testUtils.createDefaultLabDataHistory(patient));
 			d.addPatient(patient);
 			patientDao.insert(patient);
 		}
@@ -123,6 +129,7 @@ public class PatientTest {
 		patient.setCreated(new Date());
 		patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
 		patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+		patient.setLabDataHistory(testUtils.createDefaultLabDataHistory(patient));
 		d.addPatient(patient);
 		
 		assertEquals(new Long(11),patientDao.countPatientPerDoctor(d));
@@ -143,6 +150,7 @@ public class PatientTest {
 		patient.setCreated(new Date());
 		patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
 		patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+		patient.setLabDataHistory(testUtils.createDefaultLabDataHistory(patient));
 		d.addPatient(patient);
 		doctordao.insert(d);	
 		
@@ -178,6 +186,7 @@ public class PatientTest {
 			patient.setCreated(new Date());
 			patient.setPatientHistory(testUtils.createDefaultPatientHistory(patient, testUtils.createDefaultActivity(d,p,disc)));
 			patient.setMedicalhistory(testUtils.createDefaultMedicalHistory(patient));
+			patient.setLabDataHistory(testUtils.createDefaultLabDataHistory(patient));
 			d.addPatient(patient);
 			patientDao.insert(patient);
 		}

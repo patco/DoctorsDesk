@@ -14,7 +14,7 @@ public class LabEntryPK implements Serializable{
 	
 	private Integer patientid;
 	
-	@Temporal( TemporalType.TIMESTAMP)
+	@Temporal( TemporalType.DATE)
 	private Date added;
 	
 	private String type;

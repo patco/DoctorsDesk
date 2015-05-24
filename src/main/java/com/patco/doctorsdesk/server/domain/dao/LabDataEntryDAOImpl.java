@@ -25,7 +25,7 @@ public class LabDataEntryDAOImpl extends GenericDAOImpl<LabDataEntry, LabEntryPK
 	@Override
 	public List<LabDataEntry> getLabDataPerPatientAndDate(Patient patient, Date date) {
 		Query q = getEntityManager().createNamedQuery(LabDataEntry.GET_PER_PATIENT_AND_DATE)
-				  .setParameter("patient", patient).setParameter("added", date);
+				  .setParameter("patientid", patient.getId()).setParameter("added", date);
 		return  q.getResultList();
 	}
 	

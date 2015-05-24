@@ -34,7 +34,7 @@ import com.patco.doctorsdesk.server.util.exceptions.base.DoctorsDeskException;
 
 @RunWith(JukitoRunner.class)
 @UseModules(DatabaseModule.class)
-public class PatientAddressAndContactInfoTest {
+public class PatientServiceAddressAndContactInfoTest {
 	
 	@Inject 
 	PatientService patientService;
